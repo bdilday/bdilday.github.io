@@ -102,7 +102,6 @@ var set_voter_locations = function() {
         })
         .attr('cursor', 'pointer')
         .on('mouseover', function (d) {
-            console.log('mouseover voter', d);
             d3.select(this)
                 .attr('fill', 'steelblue')
                 .attr('font-size', font_multiplier*player_font_size);
@@ -233,7 +232,7 @@ var mouseout_player = function(k) {
 
 /*******************************************/
 d3.csv('hft_change.csv', function(data) {
-    console.log('data', data);
+    //console.log('data', data);
 
     var ydom = [];
     var xdom = [];
@@ -245,7 +244,7 @@ d3.csv('hft_change.csv', function(data) {
             .entries(data)
         ;
 
-    console.log('by_player', by_player);
+    //console.log('by_player', by_player);
     _.forEach(by_player, function(d, i) {
         all_players.push(d.key);
         pl_to_idx[d.key] = {};
