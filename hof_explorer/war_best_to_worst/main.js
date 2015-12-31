@@ -173,17 +173,24 @@ d3.csv('combined.csv', function(data) {
 
             _.forEach(ndata[k], function(d, i) {
 
-                idata[i].push(d);
-                if (d < min_max[i]['min']) {
-                    min_max[i]['min'] = d;
+
+                if (+iscurrent[k] === 0) {
+
+                    idata[i].push(d);
+                    if (d < min_max[i]['min']) {
+                        min_max[i]['min'] = d;
+                    }
+                    if (d > min_max[i]['max']) {
+                        min_max[i]['max'] = d;
+                    }
                 }
-                if (d > min_max[i]['max']) {
-                    min_max[i]['max'] = d;
-                }
+
             });
         });
     };
     compute_min_max(ndata);
+
+
 
     _.forEach(_.range(maxyear), function(i) {
         idata[i].sort(function(a, b) {
