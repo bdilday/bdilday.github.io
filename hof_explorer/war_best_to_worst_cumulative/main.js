@@ -44,7 +44,7 @@ var yaxis_cum = d3.svg.axis()
 
 var x = d3.scale.ordinal()
         .rangeRoundBands([0, width, 1])
-        .domain(_.map(_.range(maxyear), function (d) {
+        .domain(_.map(_.range(maxyear+2), function (d) {
             return d + 1;
         })
     )
@@ -182,15 +182,19 @@ var main = function(state) {
 
           var nd_copy = state === 'cum' ? ndata_cum : ndata;
 
-          if (state !== 'cum') {
               _.forEach(nd_copy, function (v, k) {
                   var len = v.length;
+                  var last = v[v.length-1];
                   _.forEach(_.range(maxyear - len), function () {
-                      v.push(-1);
+                      if (state === 'cum') {
+                          v.push(last);
+                      } else {
+                          v.push(-1);
+                      }
                   })
               })
               ;
-          }
+
 
           console.log('nd_copy', nd_copy);
           maxyear = 0;
