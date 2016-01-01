@@ -170,7 +170,7 @@ var main = function(state) {
               ndata[d.playerid].push(+d.war);
               var cur = 0.0;
               _.forEach(ndata[d.playerid], function (e) {
-                  cur += parseFloat(e);
+                  cur += d3.max([parseFloat(e), 0]);
               });
 
               ndata_cum[d.playerid].push(cur);
