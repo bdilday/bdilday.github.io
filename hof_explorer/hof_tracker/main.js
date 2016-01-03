@@ -3,13 +3,23 @@
 var player_font_size = 10;
 var font_multiplier = 1.25;
 
+var breathing_room = 5;
+
 var voter_columns = 2;
 var player_rows = 3;
 
+var text_stroke_width = 0.25;
 var text_duration = 800;
 
 var left_buffer = 200;
 var top_buffer = 40;
+
+var text_resting_stroke_color = '#333333';
+var quad_colors = [
+    ['#cb181d', '#41ab5d'],
+    ['#fd8d3c', '#08519c']
+];
+
 
 var margin = {top: 40, right: 30, bottom: 30, left: 50},
     width = 1000 - margin.left - margin.right,
@@ -59,12 +69,14 @@ var set_player_locations = function()
             return x(pl_to_idx[d].i);
         })
         .attr('y', function (d) {
-            return margin.top + prow(pl_to_idx[d].i % player_rows);
+            return margin.top + prow(pl_to_idx[d].i % player_rows) - breathing_room;
         })
         .text(function (d, i) {
             return d;
         })
         .attr('cursor', 'pointer')
+        .attr('stroke', text_resting_stroke_color)
+        .attr('stroke-width', text_stroke_width)
         .on('mouseover', function (d) {
             d3.select(this)
                 .attr('fill', 'steelblue')
@@ -101,6 +113,8 @@ var set_voter_locations = function() {
             return d;
         })
         .attr('cursor', 'pointer')
+        .attr('stroke', text_resting_stroke_color)
+        .attr('stroke-width', text_stroke_width)
         .on('mouseover', function (d) {
             d3.select(this)
                 .attr('fill', 'steelblue')
@@ -170,19 +184,104 @@ var mouseover_voter = function(k) {
             var t = pl_to_idx[d][k];
             var tmp = Math.floor(tmp_map[d]/inset_columns)*inset_columns;
             var ny = y0(t.new);
-            return ny + dy0 (tmp);
+            return ny + dy0 (tmp) + breathing_room;
         })
+        .attr('stroke', function(d) {
+            var t = pl_to_idx[d][k];
+            var s = quad_colors[parseInt(t.old)][parseInt(t.new)];
+            return s;
+        })
+        .attr('stroke-width', text_stroke_width)
+
     ;
+};
+
+var adjust_xaxis = function(dy) {
+
+    var new_xaxis_data = [
+        {x: left_buffer, y: top_buffer + 0.5*(height-top_buffer) + dy},
+        {x: width, y: top_buffer + 0.5*(height-top_buffer) + dy}
+    ];
+
+    svg.select('#xaxis-path')
+        .transition()
+        .duration(500)
+        .attr('d', line(new_xaxis_data))
+        .attr('class', 'axis-path')
+        .attr('stroke-width', 1)
+        .attr('stroke', 'black')
+    ;
+
+    var new_labels = [
+        {s: 'never',
+            x: left_buffer + 0.5*main_width - 45,
+            y: top_buffer + 0.5*main_height - 20 + dy,
+            anchor: 'end'},
+
+        {s: 'always',
+            x: left_buffer + 0.5*main_width- 35,
+            y: top_buffer + 0.5*main_height - 45 + dy,
+            anchor: 'start'},
+
+        {s: 'gained',
+            x: left_buffer + 0.5*main_width - 45,
+            y: top_buffer + 0.5*main_height - 45 + dy,
+            anchor: 'end'},
+
+        {s: 'lost',
+            x: left_buffer + 0.5*main_width - 35,
+            y: top_buffer + 0.5*main_height - 20 + dy,
+            anchor: 'start'}
+    ];
+
+
+    svg.selectAll('.quad-label')
+        .data(new_labels)
+        .transition()
+        .duration(500)
+        .attr('class', 'quad-label')
+        .attr('x', function(d) {
+            return d.x;
+        })
+        .attr('y', function(d) {
+            return d.y;
+        })
+        .attr('text-anchor', function(d) {
+            return d.anchor;
+        })
+        .text(function(d) {
+            return d.s;
+        })
+        .attr('font-weight', 'bold')
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', 10)
+    ;
+
 };
 
 var mouseover_player = function(k) {
     var tmp_map = {};
     var idx = [[0,0],[0,0]];
+    var max_in_quadrant = 0;
+    var max_quad = [0,0];
+
     _.forEach(all_voters, function(d) {
         var t = vt_to_idx[d][k];
         tmp_map[d] = idx[t.old][t.new];
         idx[t.old][t.new] += 1;
+        if (idx[t.old][t.new] > max_in_quadrant) {
+            max_in_quadrant = idx[t.old][t.new];
+            max_quad = [parseInt(t.old), parseInt(t.new)];
+        }
     });
+
+
+    var row_ybuffer = 20;
+    var nrow_in_max_quadrant = Math.floor(max_in_quadrant/inset_columns) + 1;
+    var dy = (nrow_in_max_quadrant-13)*row_ybuffer;
+    dy = (max_quad[1] === 1) ? dy : -dy;
+
+    adjust_xaxis(dy);
 
     svg.selectAll('.text-voter')
         .transition()
@@ -198,8 +297,16 @@ var mouseover_player = function(k) {
             var t = vt_to_idx[d][k];
             var tmp = Math.floor(tmp_map[d]/inset_columns)*inset_columns;
             var ny = y0(t.new);
-            return ny + dy0 (tmp);
+            var yadjust = max_quad === [1,1] ? dy : -dy ;
+            yadjust = (parseInt(t.new) == 0) ? dy : 0;
+            return ny + dy0 (tmp) + yadjust + breathing_room;
         })
+        .attr('stroke', function(d) {
+            var t = vt_to_idx[d][k];
+            var s = quad_colors[parseInt(t.old)][parseInt(t.new)];
+            return s;
+        })
+        .attr('stroke-width', text_stroke_width)
     ;
 }
 
@@ -211,12 +318,17 @@ var mouseout_voter = function(k) {
             return x(pl_to_idx[d].i);
         })
         .attr('y', function (d) {
-            return margin.top + prow(pl_to_idx[d].i % player_rows);
+            return margin.top + prow(pl_to_idx[d].i % player_rows) - breathing_room;
         })
+        .attr('stroke-width', text_stroke_width)
+        .attr('stroke', text_resting_stroke_color)
+
     ;
 };
 
 var mouseout_player = function(k) {
+    adjust_xaxis(0);
+
     svg.selectAll('.text-voter')
         .transition()
         .duration(text_duration)
@@ -227,12 +339,14 @@ var mouseout_player = function(k) {
         .attr('y', function (d, i) {
             return y(Math.floor(vt_to_idx[d].i/voter_columns)*voter_columns);
         })
+        .attr('stroke', 'black')
+        .attr('stroke-width', text_stroke_width)
+
     ;
 }
 
 /*******************************************/
 d3.csv('hft_change.csv', function(data) {
-    //console.log('data', data);
 
     var ydom = [];
     var xdom = [];
@@ -244,7 +358,6 @@ d3.csv('hft_change.csv', function(data) {
             .entries(data)
         ;
 
-    //console.log('by_player', by_player);
     _.forEach(by_player, function(d, i) {
         all_players.push(d.key);
         pl_to_idx[d.key] = {};
@@ -292,6 +405,7 @@ d3.csv('hft_change.csv', function(data) {
     svg.append('path')
         .attr('d', line(xaxis_data))
         .attr('class', 'axis-path')
+        .attr('id', 'xaxis-path')
         .attr('stroke-width', 1)
         .attr('stroke', 'black')
     ;
@@ -299,9 +413,25 @@ d3.csv('hft_change.csv', function(data) {
     svg.append('path')
         .attr('d', line(yaxis_data))
         .attr('class', 'axis-path')
+        .attr('id', 'yaxis-path')
         .attr('stroke-width', 1)
         .attr('stroke', 'black')
     ;
+
+    var horizontal_ceiling_data = [
+        {x: left_buffer, y: top_buffer + player_rows*player_font_size - 2},
+        {x: width, y: top_buffer + player_rows*player_font_size - 2}
+    ];
+
+
+    svg.append('path')
+        .attr('d', line(horizontal_ceiling_data))
+        .attr('class', 'axis-path')
+        .attr('id', 'yaxis-path')
+        .attr('stroke-width', 1)
+        .attr('stroke', 'black')
+    ;
+
 
     var labels = [
         {s: 'never',
@@ -327,7 +457,6 @@ d3.csv('hft_change.csv', function(data) {
 
     ];
 
-
     svg.selectAll('.quad-label')
         .data(labels)
         .enter()
@@ -349,4 +478,26 @@ d3.csv('hft_change.csv', function(data) {
         .attr('font-family', 'sans-serif')
         .attr('font-size', 10)
         ;
+
+    //svg.selectAll('.quad-label-quant')
+    //    .data(labels)
+    //    .enter()
+    //    .append('text')
+    //    .attr('class', 'quad-label-quant')
+    //    .attr('x', function(d) {
+    //        return d.x;
+    //    })
+    //    .attr('y', function(d) {
+    //        return d.y;
+    //    })
+    //    .attr('text-anchor', function(d) {
+    //        return d.anchor;
+    //    })
+    //    .text(function(d) {
+    //        return d.s;
+    //    })
+    //    .attr('font-weight', 'bold')
+    //    .attr('font-family', 'sans-serif')
+    //    .attr('font-size', 10)
+    //;
 })
