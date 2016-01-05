@@ -276,7 +276,7 @@ var mouseover_player = function(k) {
     });
 
 
-    var row_ybuffer = 20;
+    var row_ybuffer = 25;
     var nrow_in_max_quadrant = Math.floor(max_in_quadrant/inset_columns) + 1;
     var dy = (nrow_in_max_quadrant-13)*row_ybuffer;
     dy = (max_quad[1] === 1) ? dy : -dy;
