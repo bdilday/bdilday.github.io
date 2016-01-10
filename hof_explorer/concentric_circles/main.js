@@ -7,8 +7,8 @@
 var margin = {
     top: 80, right:100, left:100, bottom: 0
 };
-var height = 1200;
-var width = 800;
+var height = 1700;
+var width = 1000;
 
 var svg = d3.select('body')
         .append('svg')
@@ -24,7 +24,7 @@ var x = d3.scale.linear()
     ;
 
 d3.json('concentric_circle_war.json', function(data) {
-    console.log(data);
+    //console.log(data);
 
     function addCircle(container, radius, x, y, alpha) {
         var group = container.append("g")
@@ -60,26 +60,34 @@ d3.json('concentric_circle_war.json', function(data) {
             .attr("y2", 0)
             .style("stroke", "steelblue");
 
-        group.append
         return group;
     }
 
-    var x_buffer = 100;
-    var y_buffer = 100;
+    var x_buffer = 80;
+    var y_buffer = 80;
 
     var d = data[0];
     var i = 1;
 
-    var ncol = 16;
+    var ncol = 10;
 
     var addPlayer = function(d, i) {
-
         var c1 = addCircle(svg, d.nyear, (i%ncol)*x_buffer, parseInt(i/ncol)*y_buffer, d.war/d.nyear); // centered
         var c2 = addCircle(c1, 14, d.nyear, 0, d.w7/7); // offset by 1st circle's radius
         var c3 = addCircle(c2, 6, 14, 0, d.w3/3); // offset by 2nd circle's radius
+
+        svg.append('text')
+            .text(d.namefull)
+            .attr('x', (i%ncol)*x_buffer)
+            .attr('y', (parseInt(i/ncol)+0.5)*y_buffer)
+            .attr('font-size', 8)
+            .attr('text-anchor', 'middle')
+        ;
+
     }
 
-    _.forEach(_.range(200), function(i) {
+
+    _.forEach(_.range(data.length), function(i) {
         addPlayer(data[i], i);
     })
 
