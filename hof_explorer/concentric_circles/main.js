@@ -72,13 +72,14 @@ d3.json('concentric_circle_war.json', function(data) {
 
     var addPlayer = function(d, i) {
 
-        var v1 = d.war/d.nyear;
-        var v2 = d.w7/7;
-        var v3 = d.w3/3;
+        var v1 = d.war/20.0;
+        var v2 = d.w7/7.0 ;
+        var v3 = d.w3/3.0;
+        console.log('vals', d.namefull, v1, v2, v3, v1> v2);
 
         var c1 = addCircle(svg, d.nyear, (i%ncol)*x_buffer, parseInt(i/ncol)*y_buffer, v1); // centered
         var c2 = addCircle(c1, 14, d.nyear, 0, v2-v1); // offset by 1st circle's radius
-        var c3 = addCircle(c2, 6, 14, 0, v1+v2-v3); // offset by 2nd circle's radius
+        var c3 = addCircle(c2, 6, 14, 0, v3-v2); // offset by 2nd circle's radius
 
         svg.append('text')
             .text(d.namefull)
