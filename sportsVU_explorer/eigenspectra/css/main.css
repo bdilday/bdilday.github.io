@@ -1,0 +1,18 @@
+
+#img-container {
+    width: 800px;
+    margin: 0px auto auto auto;
+    border: solid;
+    border-width: 2px;
+}
+
+#slider-container {
+    width: 800px;
+    margin: 20px auto 10px; auto;
+}
+
+#button-animate-container {
+    font-family: sans-serif;
+    font-size: 8px;
+    margin: 5px auto 5px auto;
+}
