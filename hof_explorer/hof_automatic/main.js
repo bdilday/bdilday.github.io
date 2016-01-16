@@ -5,15 +5,16 @@
 //    var $ = require('jquery');
 
 var margin = {
-    top: 20, right:10, left:10, bottom: 0
+    top: 40, right:10, left:10, bottom: 0
 };
 var height = 1700;
 var width = 1400;
 
 var player_label = d3.select('body')
-    .append('span')
+        .append('div')
         .attr('id', 'player-label')
-    .text('---')
+        .attr('class', 'player-label-class')
+        .text('---')
 ;
 
 var svg = d3.select('body')

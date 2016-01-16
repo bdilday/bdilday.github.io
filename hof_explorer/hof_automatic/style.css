@@ -1,4 +1,9 @@
 
-#player-label {
-    margin: 5px auto auto 10px;
+
+div.player-label-class {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: white;
+    font-size: 16px;
 }
