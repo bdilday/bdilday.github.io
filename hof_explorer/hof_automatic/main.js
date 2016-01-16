@@ -45,7 +45,7 @@ var line = d3.svg.line()
 /*******************************/
 d3.csv('hof_automatic_100.csv', function(data) {
 
-console.log('data', data);
+//console.log('data', data);
 
     var xmin = 1;
     var ymin = 1;
@@ -56,7 +56,7 @@ console.log('data', data);
         return parseInt(d.rank);
     }));
 
-    console.log('max', xmax, ymax);
+  //  console.log('max', xmax, ymax);
 
     x.domain([xmin, xmax]);
     y.domain([ymin, ymax]);
@@ -68,11 +68,11 @@ console.log('data', data);
         .entries(data)
         ;
 
-    console.log('byPlayer', byPlayer);
+    //console.log('byPlayer', byPlayer);
 
     var player_lines = {};
     var do_line = function(player_data) {
-        console.log('pl data', player_data);
+        //console.log('pl data', player_data);
 
         player_lines[player_data.key] =
             svg.append('path')
@@ -95,12 +95,11 @@ console.log('data', data);
     })
 
     var mouseover = function(d) {
-        console.log('mouseover', d, '.pl-line-' + d.player);
+        //console.log('mouseover', d, '.pl-line-' + d.player);
         player_lines[d.player]
             .transition()
             .duration(200)
             .attr('stroke-width', function () {
-                console.log('mou', d);
                  return 5;
             })
             .attr('stroke', '#f16913')
@@ -108,7 +107,7 @@ console.log('data', data);
 
         svg.selectAll('.rect-'+ d.player)
             .attr('fill', function(d) {
-                console.log('rect d', d);
+                //console.log('rect d', d);
                 return 'black';
             })
         ;
@@ -117,12 +116,11 @@ console.log('data', data);
     };
 
     var mouseout = function (d) {
-        console.log('mouseout', d);
+        //console.log('mouseout', d);
         player_lines[d.player]
             .transition()
             .duration(200)
             .attr('stroke-width', function () {
-                console.log('mou', d);
                 return 1;
             })
             .attr('stroke', 'black')
