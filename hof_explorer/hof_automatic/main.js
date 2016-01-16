@@ -101,8 +101,10 @@ console.log('data', data);
             .duration(200)
             .attr('stroke-width', function () {
                 console.log('mou', d);
-                 return 3;
-            });
+                 return 5;
+            })
+            .attr('stroke', '#f16913')
+        ;
 
         svg.selectAll('.rect-'+ d.player)
             .attr('fill', function(d) {
@@ -119,11 +121,13 @@ console.log('data', data);
         player_lines[d.player]
             .transition()
             .duration(200)
-
             .attr('stroke-width', function () {
                 console.log('mou', d);
                 return 1;
-            });
+            })
+            .attr('stroke', 'black')
+        ;
+
 
         player_label.text('---');
 
