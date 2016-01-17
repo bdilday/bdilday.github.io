@@ -11,6 +11,8 @@ var margin = {
 var height = 1700;
 var width = 1400;
 
+var selected_player = '';
+
 var player_label = d3.select('body')
         .append('div')
         .attr('id', 'player-label')
@@ -76,7 +78,7 @@ d3.csv('hof_automatic_150.csv', function(data) {
         //console.log('pl data', player_data);
 
         var k = player_data.key.replace(/\s+/g, '');
-        player_lines[player_data.key] =
+        player_lines[k] =
             svg.append('path')
             .attr('class', function() {
                 return 'pl-line pl-line-' + k; // +
@@ -97,11 +99,11 @@ d3.csv('hof_automatic_150.csv', function(data) {
     })
 
     var mouseover = function(d) {
-        console.log('mouseover', d, '.pl-line-' + d.player);
+        //console.log('mouseover', d, '.pl-line-' + d.player);
 
         var k = d.player.replace(/\s+/g, '');
 
-        player_lines[d.player]
+        player_lines[k]
             .transition()
             .duration(200)
             .attr('stroke-width', function () {
@@ -111,10 +113,9 @@ d3.csv('hof_automatic_150.csv', function(data) {
         ;
 
         var sel = d3.selectAll('rect.rect-'+ d.player);
-        console.log('sel', sel);
+        //console.log('sel', sel);
         d3.selectAll('rect.rect-'+ k)
             .attr('fill', function(d) {
-                console.log('rect d', d);
                 return shade_of_orange;
             })
         ;
@@ -126,22 +127,44 @@ d3.csv('hof_automatic_150.csv', function(data) {
         //console.log('mouseout', d);
         var k = d.player.replace(/\s+/g, '');
 
-        player_lines[d.player]
-            .transition()
-            .duration(200)
-            .attr('stroke-width', function () {
-                return 1;
-            })
-            .attr('stroke', 'black')
-        ;
+        if ( k !== selected_player) {
+            player_lines[k]
+                .transition()
+                .duration(200)
+                .attr('stroke-width', function () {
+                    return 1;
+                })
+                .attr('stroke', 'black')
+            ;
 
-        d3.selectAll('rect.rect-'+ k)
-            .attr('fill', function(d) {
-                return +d.rank <= 5*d.idx ? '#0570b0' : '#9ecae1';
-            })
-        ;
+            d3.selectAll('rect.rect-' + k)
+                .attr('fill', function (d) {
+                    return +d.rank <= 5 * d.idx ? '#0570b0' : '#9ecae1';
+                })
+            ;
+        }
 
         player_label.text('---');
+
+    };
+
+    var handle_click = function(d) {
+
+        var k = d.player.replace(/\s+/g, '');
+        var oldk = '';
+        if (selected_player === k) {
+            oldk = selected_player;
+            selected_player = '';
+        } else {
+            oldk = selected_player;
+            selected_player = k;
+        }
+
+        console.log('click', d, oldk, selected_player);
+
+        mouseover({player: selected_player});
+        mouseout({player: oldk});
+
 
     };
 
@@ -165,7 +188,8 @@ d3.csv('hof_automatic_150.csv', function(data) {
         .attr('cursor', 'pointer')
         .on('mouseover', mouseover)
         .on('mouseout', mouseout)
-      ;
+        .on('click', handle_click)
+    ;
 
     svg.selectAll('.player-text')
         .data(data)
@@ -192,7 +216,7 @@ d3.csv('hof_automatic_150.csv', function(data) {
         .attr('cursor', 'pointer')
         .on('mouseover', mouseover)
         .on('mouseout', mouseout)
-
+        .on('click', handle_click)
     ;
 
 
