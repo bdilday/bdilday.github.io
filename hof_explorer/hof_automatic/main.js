@@ -4,6 +4,7 @@
 
 //    var $ = require('jquery');
 
+    var shade_of_orange = '#f16913';
 var margin = {
     top: 40, right:10, left:10, bottom: 0
 };
@@ -43,7 +44,7 @@ var line = d3.svg.line()
     ;
 
 /*******************************/
-d3.csv('hof_automatic_100.csv', function(data) {
+d3.csv('hof_automatic_150.csv', function(data) {
 
 //console.log('data', data);
 
@@ -74,13 +75,14 @@ d3.csv('hof_automatic_100.csv', function(data) {
     var do_line = function(player_data) {
         //console.log('pl data', player_data);
 
+        var k = player_data.key.replace(/\s+/g, '');
         player_lines[player_data.key] =
             svg.append('path')
             .attr('class', function() {
-                return 'pl-line pl-line-' + player_data.key; // +
+                return 'pl-line pl-line-' + k; // +
             })
             .attr('id', function() {
-                return 'pl-line-' + player_data.keyy; // +
+                return 'pl-line-' + k; // +
             })
             .attr('d', line(player_data.values)
         )
@@ -95,20 +97,25 @@ d3.csv('hof_automatic_100.csv', function(data) {
     })
 
     var mouseover = function(d) {
-        //console.log('mouseover', d, '.pl-line-' + d.player);
+        console.log('mouseover', d, '.pl-line-' + d.player);
+
+        var k = d.player.replace(/\s+/g, '');
+
         player_lines[d.player]
             .transition()
             .duration(200)
             .attr('stroke-width', function () {
                  return 5;
             })
-            .attr('stroke', '#f16913')
+            .attr('stroke', shade_of_orange)
         ;
 
-        svg.selectAll('.rect-'+ d.player)
+        var sel = d3.selectAll('rect.rect-'+ d.player);
+        console.log('sel', sel);
+        d3.selectAll('rect.rect-'+ k)
             .attr('fill', function(d) {
-                //console.log('rect d', d);
-                return 'black';
+                console.log('rect d', d);
+                return shade_of_orange;
             })
         ;
         player_label.text(d.player);
@@ -117,6 +124,8 @@ d3.csv('hof_automatic_100.csv', function(data) {
 
     var mouseout = function (d) {
         //console.log('mouseout', d);
+        var k = d.player.replace(/\s+/g, '');
+
         player_lines[d.player]
             .transition()
             .duration(200)
@@ -126,10 +135,16 @@ d3.csv('hof_automatic_100.csv', function(data) {
             .attr('stroke', 'black')
         ;
 
+        d3.selectAll('rect.rect-'+ k)
+            .attr('fill', function(d) {
+                return +d.rank <= 5*d.idx ? '#0570b0' : '#9ecae1';
+            })
+        ;
 
         player_label.text('---');
 
     };
+
     svg.selectAll('.player-box')
         .data(data)
         .enter()
@@ -139,7 +154,7 @@ d3.csv('hof_automatic_100.csv', function(data) {
         })
         .append('rect')
         .attr('class', function(d) {
-          return 'rect-' + d.player;
+          return 'rect-' + d.player.replace(/\s+/g,'');
         })
         .attr('width', 40)
         .attr('height', 10)
