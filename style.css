@@ -1,6 +1,22 @@
 
+#links-container {
+    margin: 50px auto auto auto;
+}
+
 #link-list {
     font-family: sans-serif;
     font-size: 16px;
     line-height: 24px;
+    margin: 50px auto auto auto;
+
+}
+
+.link-img {
+    width: 200px;
+    height: 200px;
+}
+
+#graphicacy-img {
+    width: 400px;
+    height: 200px;
 }
