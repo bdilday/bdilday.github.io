@@ -146,7 +146,7 @@ d3.json('/javascripts/posts/nba-minutes/updated_data.json', function(data) {
         ;
 
     var grid_y = d3.scale.linear()
-        .range([-300, 300])
+        .range([300, -300])
         .domain([-40, 40])
         ;
 
@@ -223,20 +223,18 @@ d3.json('/javascripts/posts/nba-minutes/updated_data.json', function(data) {
         console.log('datum', datum);
         var k = datum.min.toString() + ',' + datum.dif.toString();
 
+        var dur = 500;
         bar_label.text(k);
 
         bar_chart.selectAll('.team-bar-win')
             .transition()
-            .duration(200)
+            .duration(dur)
             .attr('height', function(d) {
                 var w = total[k].hasOwnProperty([d.team]) ? total[k][d.team].w : 0;
-                console.log('mouse', d, w);
-
                 return bar_scale_y(w);
             })
             .attr('y', function(d) {
                 var w = total[k].hasOwnProperty([d.team]) ? total[k][d.team].w : 0;
-
                 return 200-bar_scale_y(w);
             })
             .style('opacity', 1)
@@ -244,16 +242,13 @@ d3.json('/javascripts/posts/nba-minutes/updated_data.json', function(data) {
 
         bar_chart.selectAll('.team-bar-loss')
             .transition()
-            .duration(200)
+            .duration(dur)
             .attr('height', function(d) {
                 var w = total[k].hasOwnProperty([d.team]) ? total[k][d.team].l : 0;
-                console.log('mouse', d, w);
-
                 return bar_scale_y(w);
             })
             .attr('y', function(d) {
                 var w = total[k].hasOwnProperty([d.team]) ? total[k][d.team].l : 0;
-
                 return 200+buffer;
             })
             .style('opacity', 1)
