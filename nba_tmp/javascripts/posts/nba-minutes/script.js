@@ -28,7 +28,7 @@ var max_dif = 40;
 var all_teams = [];
 var overall_record = [];
 
-d3.json('javascripts/posts/nba-minutes/updated_data.json', function(data) {
+d3.json('/nba_tmp/javascripts/posts/nba-minutes/updated_data.json', function(data) {
 
     var total = data.total;
     var tmp = [];
