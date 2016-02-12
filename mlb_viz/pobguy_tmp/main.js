@@ -101,7 +101,6 @@ d3.json("pobguy.json", function(error, data) {
             }
         });
 
-
         return svg.append('path')
             .attr('d', line(t))
             .attr("stroke", function () {
@@ -153,64 +152,43 @@ d3.json("pobguy.json", function(error, data) {
         .text('Hang Time [s]')
     ;
 
+    var col_gradient = ['#b2182b', '#f4a582', 'black', '#2166ac', '#d1e5f0'];
+
     var rect_mouse_in = function(d) {
-        console.log('mouse in', d);
-
-        lines[d]
-            .attr('stroke-width', 15)
-            .attr('opacity', 1)
-        ;
-
-        lines[d+1]
-            .attr('stroke-width', 15)
-            .attr('opacity', 1)
-            .attr('stroke', 'blue')
-        ;
-
-        lines[d-1]
-            .attr('stroke-width', 15)
-            .attr('opacity', 1)
-            .attr('stroke', 'red')
-        ;
-
-    }
+        console.log('mouse in', d, d-col_gradient.length/2);
+        _.forEach(col_gradient, function(e, i) {
+            lines[d-parseInt(col_gradient.length/2)+i]
+            .attr('stroke-width', 5)
+            .style('opacity', 1)
+            .attr('stroke', e);
+        });
+    };
 
     var rect_mouse_out = function(d) {
+        console.log('mouse out', d);
+        _.forEach(col_gradient, function(e, i) {
+            lines[d-parseInt(col_gradient.length/2)+i]
+                .attr('stroke-width', 1)
+                .style('opacity', 0.2)
+                .attr('stroke', 'black');
+        });
 
-        lines[d]
-            .attr('stroke-width', 2)
-            .attr('opacity', 0.1)
-            .attr('stroke', 'black')
-        ;
-
-        lines[d+1]
-            .attr('stroke-width', 2)
-            .attr('opacity', 0.1)
-            .attr('stroke', 'black')
-        ;
-
-        lines[d-1]
-            .attr('stroke-width', 2)
-            .attr('opacity', 0.1)
-            .attr('stroke', 'black')
-        ;
-
-    }
+    };
 
     var make_nav = function () {
         var dy = height/all_iys.length;
         _.forEach(all_iys, function(iy) {
             svg.append('rect')
-                .attr('width', 40)
+                .attr('width', 70)
                 .attr('height', dy)
                 .attr('x', -97)
                 .attr('y', function() {
-                    console.log('iy', iy, ynavboxes(iy));
                     return ynavboxes(iy);
                 })
                 .attr('id', 'rect-' + iy.toString())
                 .attr('fill', 'black')
-                .attr('opacity', 0.3)
+                .style('opacity', 0.3)
+                .attr('cursor', 'pointer')
                 .on('mouseover', function() {
                     rect_mouse_in(iy);
                 })
@@ -223,5 +201,12 @@ d3.json("pobguy.json", function(error, data) {
 
     make_lines();
     make_nav();
+
+    svg.append('text')
+        .attr('x', -150)
+        .attr('y', -42)
+        .text('mouseover here')
+        .attr('font-weight', 'bold')
+        .attr('transform', 'rotate(-90)')
 
 });
