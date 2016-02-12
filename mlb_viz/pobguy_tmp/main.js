@@ -152,7 +152,7 @@ d3.json("pobguy.json", function(error, data) {
         .text('Hang Time [s]')
     ;
 
-    var col_gradient = ['#b2182b', '#f4a582', 'black', '#2166ac', '#d1e5f0'];
+    var col_gradient = ['#f4a582', '#b2182b',  'black', '#2166ac', '#d1e5f0'];
 
     var rect_mouse_in = function(d) {
         console.log('mouse in', d, d-col_gradient.length/2);
