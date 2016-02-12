@@ -179,7 +179,7 @@ d3.json("pobguy.json", function(error, data) {
         var dy = height/all_iys.length;
         _.forEach(all_iys, function(iy) {
             svg.append('rect')
-                .attr('width', 70)
+                .attr('width', 52)
                 .attr('height', dy)
                 .attr('x', -97)
                 .attr('y', function() {
@@ -204,7 +204,7 @@ d3.json("pobguy.json", function(error, data) {
 
     svg.append('text')
         .attr('x', -150)
-        .attr('y', -42)
+        .attr('y', -57)
         .text('mouseover here')
         .attr('font-weight', 'bold')
         .attr('transform', 'rotate(-90)')
