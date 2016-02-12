@@ -153,32 +153,52 @@ d3.json("pobguy.json", function(error, data) {
     ;
 
     var col_gradient = ['#f4a582', '#b2182b',  'black', '#2166ac', '#d1e5f0'];
+    var col_gradient_mid = parseInt(col_gradient.length/2);
+    var opacity_scale = d3.scale.ordinal()
+        .range([1, 0.5])
+        .domain(_.range(col_gradient_mid));
 
     var rect_mouse_in = function(d) {
         console.log('mouse in', d, d-col_gradient.length/2);
         _.forEach(col_gradient, function(e, i) {
-            lines[d-parseInt(col_gradient.length/2)+i]
+
+            var k = Math.abs(i-col_gradient_mid);
+            lines[d+i-col_gradient_mid]
             .attr('stroke-width', 5)
-            .style('opacity', 1)
+            .style('opacity', opacity_scale(k))
             .attr('stroke', e);
+
+            nav_rects[d+i-col_gradient_mid]
+                .attr('stroke-width', 1)
+                .style('opacity', opacity_scale(k))
+                .attr('fill', e);
+
         });
     };
 
     var rect_mouse_out = function(d) {
         console.log('mouse out', d);
         _.forEach(col_gradient, function(e, i) {
-            lines[d-parseInt(col_gradient.length/2)+i]
+            var k = Math.abs(i-col_gradient_mid);
+            lines[d+i-col_gradient_mid]
                 .attr('stroke-width', 1)
                 .style('opacity', 0.2)
                 .attr('stroke', 'black');
+
+            nav_rects[d+i-col_gradient_mid]
+                .attr('stroke-width', 1)
+                .style('opacity', 0.3)
+                .attr('fill', 'black');
+
         });
 
     };
 
+    var nav_rects = {};
     var make_nav = function () {
         var dy = height/all_iys.length;
         _.forEach(all_iys, function(iy) {
-            svg.append('rect')
+            nav_rects[iy] = svg.append('rect')
                 .attr('width', 52)
                 .attr('height', dy)
                 .attr('x', -97)
