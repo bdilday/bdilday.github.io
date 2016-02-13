@@ -69,7 +69,7 @@ d3.json("pobguy.json", function(error, data) {
             if (d.y > yd[1]) {
                 yd[1] = d.y;
             }
-            if (d.y < xd[0]) {
+            if (d.y < yd[0]) {
                 yd[0] = d.y;
             }
 

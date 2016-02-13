@@ -59,6 +59,9 @@ d3.json("pobguy_v2.json", function(error, data) {
 
     var all_iys = _.uniq(
         _.map(data, function(d) {
+            d.x = parseFloat(d.x);
+            d.y = parseFloat(d.y);
+
             if (d.x > xd[1]) {
                 xd[1] = d.x;
             }
@@ -69,7 +72,7 @@ d3.json("pobguy_v2.json", function(error, data) {
             if (d.y > yd[1]) {
                 yd[1] = d.y;
             }
-            if (d.y < xd[0]) {
+            if (d.y < yd[0]) {
                 yd[0] = d.y;
             }
 
@@ -87,6 +90,8 @@ d3.json("pobguy_v2.json", function(error, data) {
     console.log('min', _.min(all_iys));
     console.log('min', _.max(all_iys));
     console.log('ynav dom', [_.min(all_iys), _.max(all_iys)]);
+    console.log('xd', xd);
+    console.log('yd', yd);
 
     ynavboxes.domain(all_iys);
     x.domain(xd);
