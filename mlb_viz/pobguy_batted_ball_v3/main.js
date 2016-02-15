@@ -141,8 +141,49 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     var field = make_bases();
 
 
+    var datumToSelector = function(d, keys, vals) {
+        var s = '';
+        _.forEach(_.range(keys.length), function(i) {
+            s += '.' + keys[i] + '-' + vals[i];
+        })
+        console.log('d2s', s);
+        return s;
+    };
+
     var ball_mouseover = function(d) {
+        var keys = ['HangTime', 'ExitSpeed'];
+        var vals = _.map(keys, function(k) {
+            console.log(k, d, d[k], hs[k](+d[k]));
+            return parseInt(hs[k](parseFloat(d[k])));
+        });
+
+        var s = '.navrect' + datumToSelector(d, keys, vals);
+
+        console.log('navrect select', s, keys, vals);
+        d3.selectAll(s)
+            .transition()
+            .duration(batted_ball_duration)
+            .style('fill', 'steelblue')
+            .style('opacity', 1)
         ;
+
+    };
+
+    var ball_mouseout = function(d) {
+        var keys = ['HangTime', 'ExitSpeed'];
+        var vals = _.map(keys, function(k) {
+            console.log(k, d, d[k], hs[k](+d[k]));
+            return parseInt(hs[k](parseFloat(d[k])));
+        });
+
+        var s = '.navrect' + datumToSelector(d, keys, vals);
+        d3.selectAll(s)
+            .transition()
+            .duration(batted_ball_duration)
+            .style('fill', 'white')
+            .style('opacity', 0.2)
+        ;
+
     };
 
     var make_batted_balls = function(g) {
@@ -177,9 +218,15 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
                 return s ;
             })
             .on('mouseover', function(d) {
-                console.log('xy', $(this).attr('cx'), $(this).attr('cy'));
                 ball_mouseover(d);
+                $(this).attr('r', 10).attr('opacity', 1);
             })
+            .on('mouseout', function(d) {
+                ball_mouseout(d);
+                $(this).attr('r', 2).attr('opacity', resting_opacity);
+
+            })
+
         ;
     };
 
@@ -187,7 +234,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     var nav_rect_mouseover = function(kx, idx_x, ky, idx_y) {
         console.log('nav_rect mouseover!');
 
-        var selector_string = '';
+        var selector_string = '.battedball';
         selector_string += '.' + kx + '-' + idx_x + '';
         selector_string += '.' + ky + '-' + idx_y + '';
 
@@ -204,7 +251,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
             })
             ;
 
-        selector_string = '';
+        selector_string = '.battedball';
         selector_string += '.' + kx + '-' + (idx_x-1).toString() + '';
         selector_string += '.' + ky + '-' + (idx_y-1).toString() + '';
 
@@ -221,7 +268,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
             })
         ;
 
-        selector_string = '';
+        selector_string = '.battedball';
         selector_string += '.' + kx + '-' + (idx_x+1).toString() + '';
         selector_string += '.' + ky + '-' + (idx_y+1).toString() + '';
 
@@ -243,7 +290,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     var nav_rect_mouseout = function(kx, idx_x, ky, idx_y) {
         console.log('nav_rect mouseout!');
 
-        var selector_string = '';
+        var selector_string = '.battedball';
         selector_string += '.' + kx + '-' + idx_x + '';
         selector_string += '.' + ky + '-' + idx_y + '';
 
@@ -259,7 +306,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
             })
         ;
 
-        selector_string = '';
+        selector_string = '.battedball';
         selector_string += '.' + kx + '-' + (idx_x-1).toString() + '';
         selector_string += '.' + ky + '-' + (idx_y-1).toString() + '';
 
@@ -275,7 +322,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
             })
         ;
 
-        selector_string = '';
+        selector_string = '.battedball';
         selector_string += '.' + kx + '-' + (idx_x+1).toString() + '';
         selector_string += '.' + ky + '-' + (idx_y+1).toString() + '';
 
@@ -305,7 +352,12 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
             _.forEach(_.range(number_of_bins[ky]), function(idx_y) {
 
                 nav_matrix.append('rect')
-                    .attr('class', 'navrect')
+                    .attr('class', function() {
+                        var s = 'navrect ';
+                        s += kx + '-' + idx_x + ' ';
+                        s += ky + '-' + idx_y + ' ' ;
+                        return s;
+                    })
                     .style('fill', 'white')
                     .style('stroke', 'black')
                     .attr('width', nav_square_sz)
@@ -320,10 +372,11 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
                     .on('mouseover', function() {
                         console.log('nav_square', kx, idx_x, ky, idx_y);
                         nav_rect_mouseover(kx, idx_x, ky, idx_y);
+                        $(this).attr('fill', 'steelblue').attr('opacity', 1);
                     })
                     .on('mouseout', function() {
                         nav_rect_mouseout(kx, idx_x, ky, idx_y);
-
+                        $(this).attr('fill', 'white').attr('opacity', 0.2);
                     })
                 ;
 
