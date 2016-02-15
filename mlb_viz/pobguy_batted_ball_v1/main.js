@@ -53,7 +53,7 @@ var line = d3.svg.line()
 d3.json("pobguy.json", function(error, data) {
     console.log(data);
 
-    var lines = {}
+    var lines = {};
     var xd = [9999, -9999];
     var yd = [9999, -9999];
 

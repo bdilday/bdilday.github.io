@@ -1,0 +1,34 @@
+
+
+.axis text {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.base {
+    fill: cornflowerblue;
+    opacity: 1;
+    stroke-width: 1;
+    stroke: grey;
+
+}
+
+/*.battedball {*/
+    /*opacity: 0.2;*/
+/*}*/
+
+.nav-label {
+    font-size: 8;
+    shape-rendering: crispEdges;
+
+}
+
+.nav-label-x {
+    text-anchor: middle;
+}
