@@ -3,7 +3,7 @@
  */
 
     var resting_opacity = 0.05;
-    var batted_ball_duration = 400;
+    var batted_ball_duration = 100;
 var feetPerPixel = 2;
 var nav_square_sz = 5;
 var nav_square_buffer = 0;
@@ -65,6 +65,13 @@ var line = d3.svg.line()
 
 // daytime,ExitSpeed,VExitAngle,HExitAngle,Carry,Bearing,HangTime,rho,hand,outcome,slg,LW,
 var number_of_bins = {'VExitAngle': 20, 'HangTime': 20, 'ExitSpeed': 20};
+
+var all_keys = [];
+
+_.forIn(number_of_bins, function(v, k) {
+    all_keys.push(k);
+});
+
 var hs = _.mapValues(number_of_bins, function(v, k) {
     return d3.scale.linear()
         .range([0, v+1])
@@ -151,38 +158,62 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     };
 
     var ball_mouseover = function(d) {
-        var keys = ['HangTime', 'ExitSpeed'];
-        var vals = _.map(keys, function(k) {
+
+        var vals = _.map(all_keys, function(k) {
             console.log(k, d, d[k], hs[k](+d[k]));
             return parseInt(hs[k](parseFloat(d[k])));
         });
 
-        var s = '.navrect' + datumToSelector(d, keys, vals);
+        for (var i=0; i<all_keys.length; i++) {
+            for (var j=i+1; j<all_keys.length; j++) {
+                var ki = all_keys[i];
+                var kj = all_keys[j];
+                var ks = [ki, kj];
+                var vs = [vals[i], vals[j]];
 
-        console.log('navrect select', s, keys, vals);
-        d3.selectAll(s)
-            .transition()
-            .duration(batted_ball_duration)
-            .style('fill', 'steelblue')
-            .style('opacity', 1)
-        ;
+                var s = '.navrect' + datumToSelector(d, ks, vs);
+
+                console.log('navrect select', s, ks, vs);
+                d3.selectAll(s)
+                    .transition()
+                    .duration(batted_ball_duration)
+                    .style('fill', 'steelblue')
+                    .style('opacity', 1)
+                ;
+
+            };
+        };
 
     };
 
     var ball_mouseout = function(d) {
-        var keys = ['HangTime', 'ExitSpeed'];
-        var vals = _.map(keys, function(k) {
+
+        var vals = _.map(all_keys, function(k) {
             console.log(k, d, d[k], hs[k](+d[k]));
             return parseInt(hs[k](parseFloat(d[k])));
         });
 
-        var s = '.navrect' + datumToSelector(d, keys, vals);
-        d3.selectAll(s)
-            .transition()
-            .duration(batted_ball_duration)
-            .style('fill', 'white')
-            .style('opacity', 0.2)
-        ;
+        for (var i=0; i<all_keys.length; i++) {
+            for (var j=i+1; j<all_keys.length; j++) {
+                var ki = all_keys[i];
+                var kj = all_keys[j];
+                var ks = [ki, kj];
+                var vs = [vals[i], vals[j]];
+
+                var s = '.navrect' + datumToSelector(d, ks, vs);
+
+                console.log('navrect select', s, ks, vs);
+
+                d3.selectAll(s)
+                    .transition()
+                    .duration(batted_ball_duration)
+                    .style('fill', 'white')
+                    .style('opacity', 0.2)
+                ;
+
+            };
+        };
+
 
     };
 
@@ -232,7 +263,7 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
 
 
     var nav_rect_mouseover = function(kx, idx_x, ky, idx_y) {
-        console.log('nav_rect mouseover!');
+        console.log('nav_rect mouseover!', kx, idx_x, ky, idx_y);
 
         var selector_string = '.battedball';
         selector_string += '.' + kx + '-' + idx_x + '';
@@ -418,18 +449,14 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     var nav_x_initial = 900;
     var nav_y_initial = 20;
 
-    var ks = [];
-    _.forIn(number_of_bins, function(v, k) {
-        ks.push(k);
-    });
 
     var kx
     var ky;
 
-    for (var i=0; i<ks.length; i++ ){
-        for (var j=i+1; j<ks.length; j++) {
-            kx = ks[i];
-            ky = ks[j];
+    for (var i=0; i<all_keys.length; i++ ){
+        for (var j=i+1; j<all_keys.length; j++) {
+            kx = all_keys[i];
+            ky = all_keys[j];
             var k = kx + '_' + ky;
             var dx = i*(nav_square_sz+nav_square_buffer)*number_of_bins[kx];
             var dy = j*(nav_square_sz+nav_square_buffer)*number_of_bins[ky];
@@ -439,5 +466,9 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
 
         }
     }
+
+    _.forEach(all_keys, function(k) {
+
+    })
 
 });
