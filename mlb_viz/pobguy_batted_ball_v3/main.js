@@ -343,7 +343,6 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
 
     var make_nav_square = function(nav_matrix, kx, ky) {
 
-
         console.log('make_nav_square');
         var idx_array = [];
         console.log(kx, _.range(number_of_bins[kx]));
@@ -419,11 +418,26 @@ d3.csv("batted-balls-2009.csv", function(error, data) {
     var nav_x_initial = 900;
     var nav_y_initial = 20;
 
-    nv['1'] = make_nav_matrix(nav_x_initial, nav_y_initial);
-    make_nav_square(nv['1'], 'HangTime', 'ExitSpeed');
+    var ks = [];
+    _.forIn(number_of_bins, function(v, k) {
+        ks.push(k);
+    });
 
-    nv['2'] = make_nav_matrix(nav_x_initial + (nav_square_sz+nav_square_buffer)*20, nav_y_initial);
-    make_nav_square(nv['2'], 'VExitAngle', 'ExitSpeed');
+    var kx
+    var ky;
 
+    for (var i=0; i<ks.length; i++ ){
+        for (var j=i+1; j<ks.length; j++) {
+            kx = ks[i];
+            ky = ks[j];
+            var k = kx + '_' + ky;
+            var dx = i*(nav_square_sz+nav_square_buffer)*number_of_bins[kx];
+            var dy = j*(nav_square_sz+nav_square_buffer)*number_of_bins[ky];
+
+            nv[k] = make_nav_matrix(nav_x_initial + dx, nav_y_initial + dy);
+            make_nav_square(nv[k], kx, ky);
+
+        }
+    }
 
 });
