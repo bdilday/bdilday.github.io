@@ -2,14 +2,22 @@
 <html lang="en">
 <head>
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <meta charset="UTF-8">
     <title>March Madness Explorer - round 2 PCA, 2016</title>
 </head>
 <body>
+
+<div class="ui-widget">
+    <label for="tags">Users: </label>
+    <input type="text" id="tags">
+</div>
 
 <div id="container"></div>
 
@@ -21,7 +29,6 @@
 
     ga('create', 'UA-71774734-1', 'auto');
     ga('send', 'pageview');
-
 </script>
 
 <script type="text/javascript" src="main.js"></script>

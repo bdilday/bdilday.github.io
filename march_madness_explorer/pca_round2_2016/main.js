@@ -3,6 +3,7 @@
 var unhighlighted_stroke_width = 0.5;
 var highlighted_stroke_width = 5;
 
+var current_selection = '';
 
 var cell_sz = 200;
 var ncell = 7;
@@ -77,36 +78,58 @@ var setLabel = function (d) {
         .transition()
         .duration(200)
         .text(d.user.toString());
-
 };
 
 function highlight_on(d) {
 
-    k = d.user + '-' + d.entry;
+    k = d.user ;
     console.log('mouse k', d, k)
     svg.selectAll('.' + k)
         .transition()
         .duration(200)
         .attr('r', 10)
-        .attr('fill', 'red')
-        //.attrr
+        .attr('fill', function(d) {
+            return d.entry == 1 ? 'red' : 'steelblue';
+        })
+        .attr('opacity', 1)
     ;
 
 }
 
 function highlight_off(d) {
 
-    k = d.user + '-' + d.entry;
+    k = d.user ;
     svg.selectAll('.' + k)
         .transition()
         .duration(200)
         .attr('r', 2)
-        .attr('fill', 'grey')
+        .attr('fill', 'black')
+        .attr('opacity', 0.2)
     ;
 
 }
 
 var ncomp = 16;
+
+
+var changeHandler = function(event, ui) {
+    mouseout(current_selection);
+    console.log('select!', event, ui);
+    d = {user: ui.item.value}
+    console.log('change handler d');
+    current_selection = d;
+    mouseover(d);
+};
+
+var setTags = function(availableTags) {
+    $("#tags").autocomplete({
+        source : availableTags,
+        select : changeHandler
+    })
+
+//    $("#tags").data("ui-autocomplete")._trigger("change")
+
+};
 
 /****************************************/
 d3.json('pca_rd2_2016.json', function(data) {
@@ -118,6 +141,19 @@ d3.json('pca_rd2_2016.json', function(data) {
         k = 'pca' + (i+1).toString();
         min_max[k] = {min: 999, max: -999};
         pca_keys.push(k);
+    });
+
+    var listOfUsers = _.unique(_.map(data, function(d) {
+        return d.user;
+    }));
+
+    setTags(listOfUsers);
+
+
+
+    $("#tags").on( "ui-autocomplete", function(event,ui) {
+        // post value to console for validation
+        mouseover({user: $(this).val()});
     });
 
     var compute_min_max = function(data) {
@@ -155,7 +191,7 @@ d3.json('pca_rd2_2016.json', function(data) {
             .enter()
             .append('circle')
             .attr('class', function(d) {
-                return class_name + ' ' + d.user + '-' + d.entry
+                return class_name + ' ' + d.user + ' ' + d.user + '-' + d.entry
             })
             .attr('cx', function(d) {
                 return xscales[kx](d[kx]) + xoffset;
@@ -164,6 +200,8 @@ d3.json('pca_rd2_2016.json', function(data) {
                 return yscales[ky](d[ky]) + yoffset;
             })
             .attr('r', 2)
+            .attr('fill', 'black')
+            .attr('opacity', 0.2)
             .on('mouseover', function(d, i) {
                 mouseover(d);
             })
