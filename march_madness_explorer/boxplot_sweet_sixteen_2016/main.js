@@ -2,10 +2,24 @@
 // https://bl.ocks.org/mbostock/4061502
 
 
+var top10 = [
+    'mallorqui'
+    ,'method-2-the-madness'
+    ,'lavarez'
+    ,'hack-a-bracket'
+    ,'jeremyjames'
+    ,'bayz'
+    ,'nthustatistic'
+    ,'magic'
+    ,'glicko'
+    ,'adamgilfix'
+    ,'oneshiningmgf'
+];
+
 var xbuff = 0.1;
 
 var margin = {top: 60, right: 80, bottom: 20, left: 100},
-    width = 1200 - margin.left - margin.right,
+    width = 1400 - margin.left - margin.right,
     height = 1200 - margin.top - margin.bottom;
 
 var whisker_stroke_width = 2;
@@ -271,6 +285,41 @@ d3.json('boxplot_rd3.json', function(indata) {
         mouseover({user: $(this).val()});
     });
 
+    svg.append('text')
+        .attr('x', 300)
+        .attr('y', 50)
+        .text('highlighted user')
+        .attr('font-size', 36)
+        .attr('font-weight', 'bold')
+        .attr('id', 'label')
+    ;
+
+
+    svg.append('text')
+        .attr('x', 1000)
+        .attr('y', 160)
+        .attr('font-size', 20)
+        .attr('cursor', 'pointer')
+        .text('top 10')
+        .attr('font-weight', 'bold')
+    ;
+
+
+    _.forEach(top10,function(name, i) {
+        svg.append('text')
+            .attr('x', 1000)
+            .attr('y', 200 + i*20)
+            .attr('font-size', 20)
+            .attr('cursor', 'pointer')
+            .text(name)
+            .on('mouseover', function() {
+                mouseover({user: name})
+            })
+            .on('mouseout', function() {
+                mouseout({user: name})
+            })
+        ;
+    });
 
 });
 
