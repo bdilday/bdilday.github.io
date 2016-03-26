@@ -1,28 +1,32 @@
 
+
 var top10 = [
     'mallorqui'
-    ,'method-2-the-madness'
-    ,'lavarez'
     ,'hack-a-bracket'
     ,'jeremyjames'
+    ,'method-2-the-madness'
     ,'bayz'
     ,'nthustatistic'
+    ,'adamgilfix'
+    ,'justdukeit'
+    ,'luckyguesser'
+    ,'napomatic'
+    ,'lavarez'
     ,'magic'
     ,'glicko'
-    ,'adamgilfix'
     ,'oneshiningmgf'
 ];
 
 var xbuff = 0.1;
 
 var margin = {top: 60, right: 80, bottom: 20, left: 100},
-    width = 1400 - margin.left - margin.right,
+    width = 1500 - margin.left - margin.right,
     height = 1200 - margin.top - margin.bottom;
 
 var whisker_stroke_width = 2;
-var cell_height = 400;
-var cell_width = 100;
-var cell_buffer = 20;
+var cell_height = 200;
+var cell_width = 32;
+var cell_buffer = 8;
 var user_stroke_width = 5;
 
 var y = d3.scale.linear()
@@ -52,7 +56,7 @@ var mouseover = function (d) {
 };
 
 var setLabel = function (d) {
-    console.log('set lab', d);
+    //console.log('set lab', d);
 
     svg.selectAll('#label')
         .transition()
@@ -63,14 +67,14 @@ var setLabel = function (d) {
 function highlight_on(d) {
 
     k = d.user ;
-    console.log('mouse k', d, k)
+    //console.log('mouse k', d, k, '.'+k)
     var a = svg.selectAll('.' + k)
         .transition()
         .duration(200)
         .style('opacity', 1)
         ;
 
-    console.log('a', a);
+//    console.log('a', a);
 }
 
 function highlight_off(d) {
@@ -79,7 +83,6 @@ function highlight_off(d) {
     svg.selectAll('.' + k)
         .transition()
         .duration(200)
-        .attr('r', 2)
         .style('opacity', 0.0)
     ;
 
@@ -89,9 +92,9 @@ var current_selection = 'XXX';
 
 var changeHandler = function(event, ui) {
     mouseout(current_selection);
-    console.log('select!', event, ui);
+    //console.log('select!', event, ui);
     d = {user: ui.item.value}
-    console.log('change handler d');
+    //console.log('change handler d');
     current_selection = d;
     mouseover(d);
 };
@@ -116,18 +119,50 @@ var line = d3.svg.line()
     })
     .interpolate(interpolate_type);
 
+var set_game_text = function(d) {
+
+        svg.selectAll('#game-text')
+            .transition()
+            .duration(200)
+            .text(d.game_name.toString());
+
+        svg.selectAll('.' + d.gameidx)
+            .transition()
+            .duration(200)
+            .attr('opacity', 1)
+}
 /****************************************/
-d3.json('boxplot_rd3.json', function(indata) {
+d3.json('boxplot_all.json', function(indata) {
 
     var games = indata['games']
     var users = indata['users'];
+
+    //console.log('games', games);
+    //console.log('users', users);
 
     var make_boxplot = function(d, idx) {
 
         var child_svg = svg.append('g')
             .attr('transform', function() {
-                var dx = idx * (cell_width + cell_buffer);
-                return 'translate(' + dx.toString() + ',100)';
+                var ix, iy;
+                if (idx<32) {
+                    ix = idx;
+                    iy = 1;
+                } else if(idx<48) {
+                    ix = 2*(idx-32) + 0.5;
+                    iy = 2;
+                } else if(idx<56) {
+                    ix = 4*(idx-48) + 1.5;
+                    iy = 3;
+                };
+
+                var yoff = 100;
+                var dx = ix * (cell_width + cell_buffer);
+                var dy = iy * cell_height - yoff;
+                return 'translate('
+                    + dx.toString()
+                    + ','
+                    + dy.toString() + ')';
             });
 
         //var wl = d.whisker_low;
@@ -138,6 +173,24 @@ d3.json('boxplot_rd3.json', function(indata) {
 
         //var wl = d.whisker_low95;
         //var wh = d.whisker_high95;
+
+        // bounding box
+        child_svg.append('rect')
+            .attr('width', function() {
+                return x(1);
+            })
+            .attr('height', function() {
+                return y(0);
+            })
+            .attr('fill', 'white')
+            .style('opacity', 0.5)
+            .attr('stroke-width', 1)
+            .attr('stroke', 'black')
+            .attr('cursor', 'pointer')
+            .on('mouseover', function() {
+                set_game_text(d);
+            });
+
 
         // first draw the whiskers,
         var silly_data = [
@@ -168,21 +221,6 @@ d3.json('boxplot_rd3.json', function(indata) {
 
         });
 
-        // bounding box
-        child_svg.append('rect')
-            .attr('width', function() {
-                return x(1);
-            })
-            .attr('height', function() {
-                return y(0);
-            })
-            .attr('fill', 'none')
-            .style('opacity', 1)
-            .attr('stroke-width', 1)
-            .attr('stroke', 'black')
-
-        ;
-
         // now draw the box, lol
         child_svg.append('rect')
             .attr('width', function() {
@@ -200,20 +238,23 @@ d3.json('boxplot_rd3.json', function(indata) {
             .attr('fill', 'cornflowerblue')
         ;
 
-        var text_x = -0.05;
-
+        var text_x = -0.2;
         child_svg.append('text')
             .text(function() {
                 return d.game_name
             })
-            .attr('font-size', 16)
+            .attr('font-size', 14)
             .attr('text-anchor', 'middle')
+            .attr('opacity', function() {
+                return idx>=32 ? 0.8 : 0;
+            })
             .attr('x', function() {
                 return x(text_x);
             })
             .attr('y', function() {
                 return y(0.5);
             })
+            .attr('class', 'text-'+idx.toString())
             .attr('transform', function() {
                 var s = 'rotate(-90,'
                 s += x(text_x).toString() ;
@@ -222,6 +263,7 @@ d3.json('boxplot_rd3.json', function(indata) {
                 s += ')';
                 return s;
             })
+
     };
 
     _.forEach(games, function(d, i) {
@@ -235,45 +277,60 @@ d3.json('boxplot_rd3.json', function(indata) {
 
     setTags(listOfUsers);
 
-    var ng = 8;
+
     var set_user = function(d) {
 
-        _.forEach(users[d], function(e, isol) {
+//        console.log('e', d);
+        idx = d.game+1;
 
-            _.forEach(_.range(ng), function(idx) {
+//        games
+        var datum = [
+            {x: xbuff, y: d.pred},
+            {x: 1- xbuff, y: d.pred}
+        ];
 
-                v = 'pca' + (idx+1).toString();
-                var datum = [
-                    {x: xbuff, y: e[v]},
-                    {x: 1- xbuff, y: e[v]}
-                ];
+        var child_svg = svg.append('g')
+            .attr('transform', function() {
 
-                var child_svg = svg.append('g')
-                    .attr('transform', function() {
-                        var dx = idx * (cell_width + cell_buffer);
-                        return 'translate(' + dx.toString() + ',100)';
-                    });
+                var ix, iy;
+                if (idx<32) {
+                    ix = idx;
+                    iy = 1;
+                } else if(idx<48) {
+                    ix = 2*(idx-32) + 0.5;
+                    iy = 2;
+                } else if(idx<56) {
+                    ix = 4*(idx-48) + 1.5;
+                    iy = 3;
+                };
 
-                child_svg.append('path')
-                    .attr("d", line(datum))
-                    .attr("stroke", function () {
-                        return isol==0 ? 'red' : 'blue' ;
-                    })
-                    .attr("stroke-width", user_stroke_width)
-                    .style('opacity', 0)
-                    .attr("fill", "none")
-                    .attr('class', function() {
-                        return e.user;
-                    })
-                ;
+                var yoff = 100;
+                var dx = ix * (cell_width + cell_buffer);
+                var dy = iy * cell_height - yoff;
+                return 'translate('
+                    + dx.toString()
+                    + ','
+                    + dy.toString() + ')';
 
             });
 
-        });
+        child_svg.append('path')
+            .attr("d", line(datum))
+            .attr("stroke", function () {
+                return d.entry == 1 ? 'red' : 'blue' ;
+            })
+            .attr("stroke-width", user_stroke_width)
+            .style('opacity', 0)
+            .attr("fill", "none")
+            .attr('class', function() {
+                return d.user;
+            })
+        ;
 
     };
 
-    _.forEach(listOfUsers, function(u) {
+
+    _.forEach(users, function(u) {
         set_user(u);
     });
 
@@ -281,6 +338,7 @@ d3.json('boxplot_rd3.json', function(indata) {
         // post value to console for validation
         mouseover({user: $(this).val()});
     });
+
 
     svg.append('text')
         .attr('x', 300)
@@ -293,20 +351,35 @@ d3.json('boxplot_rd3.json', function(indata) {
 
 
     svg.append('text')
-        .attr('x', 1000)
-        .attr('y', 160)
-        .attr('font-size', 20)
-        .attr('cursor', 'pointer')
-        .text('top 10')
+        .attr('x', 600)
+        .attr('y', 50)
+        .text('highlighted game')
+        .attr('font-size', 36)
+        .attr('font-weight', 'bold')
+        .attr('id', 'game-text')
+        .attr('fill', 'cornflowerblue')
         .attr('font-weight', 'bold')
     ;
 
+    var listx = 1280;
+    var listy = 80;
+    var list_dy = 20;
+    var list_font = 16;
+
+    svg.append('text')
+        .attr('x', listx)
+        .attr('y', listy)
+        .attr('font-size', list_font)
+        .attr('cursor', 'pointer')
+        .text('top 10+')
+        .attr('font-weight', 'bold')
+    ;
 
     _.forEach(top10,function(name, i) {
         svg.append('text')
-            .attr('x', 1000)
-            .attr('y', 200 + i*20)
-            .attr('font-size', 20)
+            .attr('x', listx)
+            .attr('y', listy + (i+1)*list_dy)
+            .attr('font-size', list_font)
             .attr('cursor', 'pointer')
             .text(name)
             .on('mouseover', function() {
@@ -317,6 +390,7 @@ d3.json('boxplot_rd3.json', function(indata) {
             })
         ;
     });
+
 
 });
 
