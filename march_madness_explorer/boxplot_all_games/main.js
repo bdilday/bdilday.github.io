@@ -15,6 +15,7 @@ var top10 = [
     ,'magic'
     ,'glicko'
     ,'oneshiningmgf'
+    ,'fivethirtyeight'
 ];
 
 var xbuff = 0.1;
@@ -72,6 +73,8 @@ function highlight_on(d) {
         .transition()
         .duration(200)
         .style('opacity', 1)
+            .style('display', 'block')
+
         ;
 
 //    console.log('a', a);
@@ -84,6 +87,8 @@ function highlight_off(d) {
         .transition()
         .duration(200)
         .style('opacity', 0.0)
+        .style('display', 'none')
+
     ;
 
 }
@@ -137,8 +142,8 @@ d3.json('boxplot_all.json', function(indata) {
     var games = indata['games']
     var users = indata['users'];
 
-    //console.log('games', games);
-    //console.log('users', users);
+    console.log('games', games);
+    console.log('users', users);
 
     var make_boxplot = function(d, idx) {
 
@@ -154,9 +159,12 @@ d3.json('boxplot_all.json', function(indata) {
                 } else if(idx<56) {
                     ix = 4*(idx-48) + 1.5;
                     iy = 3;
+                } else if(idx<60) {
+                    ix = 8*(idx-56) + 2.5;
+                    iy = 4;
                 };
 
-                var yoff = 100;
+        var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
                 var dy = iy * cell_height - yoff;
                 return 'translate('
@@ -236,6 +244,8 @@ d3.json('boxplot_all.json', function(indata) {
                 return y(d.quartile_high);
             })
             .attr('fill', 'cornflowerblue')
+            .attr('cursor', 'pointer')
+            .on('mouseover', set_game_text(d))
         ;
 
         var text_x = -0.2;
@@ -304,6 +314,9 @@ d3.json('boxplot_all.json', function(indata) {
                 } else if(idx<56) {
                     ix = 4*(idx-48) + 1.5;
                     iy = 3;
+                } else if(idx<60) {
+                    ix = 8*(idx-56) + 2.5;
+                    iy = 4;
                 };
 
                 var yoff = 100;
@@ -319,10 +332,11 @@ d3.json('boxplot_all.json', function(indata) {
         child_svg.append('path')
             .attr("d", line(datum))
             .attr("stroke", function () {
-                return d.entry == 1 ? 'red' : 'blue' ;
+                return d.entry == 1 ? '#bd0026' : '#525252' ;
             })
             .attr("stroke-width", user_stroke_width)
             .style('opacity', 0)
+            .style('display', 'none')
             .attr("fill", "none")
             .attr('class', function() {
                 return d.user;
