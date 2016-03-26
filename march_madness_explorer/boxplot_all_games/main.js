@@ -273,7 +273,9 @@ d3.json('boxplot_all.json', function(indata) {
     var prob_keys = [];
     var min_max = {};
 
-    var listOfUsers = _.keysIn(users);
+    var listOfUsers = _.unique(_.map(users, function(u) {
+        return u.user;
+    }));
 
     setTags(listOfUsers);
 
@@ -281,7 +283,7 @@ d3.json('boxplot_all.json', function(indata) {
     var set_user = function(d) {
 
 //        console.log('e', d);
-        idx = d.game+1;
+        idx = d.game;
 
 //        games
         var datum = [
