@@ -146,28 +146,34 @@ d3.json('boxplot_all.json', function(indata) {
     console.log('games', games);
     console.log('users', users);
 
+    var idx_to_ixy = function(idx) {
+
+        if (idx<32) {
+            ix = idx;
+            iy = 1;
+        } else if(idx<48) {
+            ix = 2*(idx-32) + 0.5;
+            iy = 2;
+        } else if(idx<56) {
+            ix = 4*(idx-48) + 1.5;
+            iy = 3;
+        } else if(idx<60) {
+            ix = 8*(idx-56) + 3.5;
+            iy = 4;
+        } else if(idx<62) {
+            ix = 16*(idx-60) + 7.5;
+            iy = 5;
+        };
+
+        return {ix: ix, iy: iy};
+    }
     var make_boxplot = function(d, idx) {
 
         var child_svg = svg.append('g')
             .attr('transform', function() {
-                var ix, iy;
-                if (idx<32) {
-                    ix = idx;
-                    iy = 1;
-                } else if(idx<48) {
-                    ix = 2*(idx-32) + 0.5;
-                    iy = 2;
-                } else if(idx<56) {
-                    ix = 4*(idx-48) + 1.5;
-                    iy = 3;
-                } else if(idx<60) {
-                    ix = 8*(idx-56) + 3.5;
-                    iy = 4;
-                } else if(idx<62) {
-                    ix = 16*(idx-60) + 7.5;
-                    iy = 5;
-                };
-
+                var ixy = idx_to_ixy(idx);
+                var ix = ixy.ix;
+                var iy = ixy.iy;
 
         var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
@@ -248,9 +254,26 @@ d3.json('boxplot_all.json', function(indata) {
             .attr('y', function() {
                 return y(d.quartile_high);
             })
-            .attr('fill', 'cornflowerblue')
+            .attr('fill', '#4292c6')
+            .attr('stroke', 'black')
+            .attr('stroke-width', 1)
             .attr('cursor', 'pointer')
             .on('mouseover', set_game_text(d))
+        ;
+
+        datum = [
+            {x: xbuff, y: d.median},
+            {x: 1-xbuff, y: d.median}
+            ];
+
+        child_svg.append('path')
+            .attr("d", line(datum))
+            .attr("stroke", function () {
+                return 'black';
+            })
+            .attr("stroke-width", 1)
+            .style('opacity', 1)
+            .attr("fill", "none")
         ;
 
         var text_x = -0.2;
@@ -309,24 +332,9 @@ d3.json('boxplot_all.json', function(indata) {
         var child_svg = svg.append('g')
             .attr('transform', function() {
 
-                var ix, iy;
-                if (idx<32) {
-                    ix = idx;
-                    iy = 1;
-                } else if(idx<48) {
-                    ix = 2*(idx-32) + 0.5;
-                    iy = 2;
-                } else if(idx<56) {
-                    ix = 4*(idx-48) + 1.5;
-                    iy = 3;
-                } else if(idx<60) {
-                    ix = 8*(idx-56) + 3.5;
-                    iy = 4;
-                } else if(idx<62) {
-                    ix = 16*(idx-60) + 7.5;
-                    iy = 5;
-                };
-
+                var ixy = idx_to_ixy(idx);
+                var ix = ixy.ix;
+                var iy = ixy.iy;
 
         var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
