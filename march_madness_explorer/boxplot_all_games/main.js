@@ -6,6 +6,7 @@ var top10 = [
     ,'jeremyjames'
     ,'method-2-the-madness'
     ,'bayz'
+    ,'vince0'
     ,'nthustatistic'
     ,'adamgilfix'
     ,'justdukeit'
@@ -160,9 +161,13 @@ d3.json('boxplot_all.json', function(indata) {
                     ix = 4*(idx-48) + 1.5;
                     iy = 3;
                 } else if(idx<60) {
-                    ix = 8*(idx-56) + 2.5;
+                    ix = 8*(idx-56) + 3.5;
                     iy = 4;
+                } else if(idx<62) {
+                    ix = 16*(idx-60) + 7.5;
+                    iy = 5;
                 };
+
 
         var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
@@ -315,11 +320,15 @@ d3.json('boxplot_all.json', function(indata) {
                     ix = 4*(idx-48) + 1.5;
                     iy = 3;
                 } else if(idx<60) {
-                    ix = 8*(idx-56) + 2.5;
+                    ix = 8*(idx-56) + 3.5;
                     iy = 4;
+                } else if(idx<62) {
+                    ix = 16*(idx-60) + 7.5;
+                    iy = 5;
                 };
 
-                var yoff = 100;
+
+        var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
                 var dy = iy * cell_height - yoff;
                 return 'translate('
