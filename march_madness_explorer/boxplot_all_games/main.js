@@ -143,8 +143,8 @@ d3.json('boxplot_all.json', function(indata) {
     var games = indata['games']
     var users = indata['users'];
 
-    console.log('games', games);
-    console.log('users', users);
+    //console.log('games', games);
+    //console.log('users', users);
 
     var idx_to_ixy = function(idx) {
 
