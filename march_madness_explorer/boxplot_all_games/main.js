@@ -177,7 +177,7 @@ d3.json('boxplot_all.json', function(indata) {
 
         var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
-                var dy = iy * cell_height - yoff;
+                var dy = iy * (cell_height + cell_buffer) - yoff;
                 return 'translate('
                     + dx.toString()
                     + ','
@@ -338,7 +338,7 @@ d3.json('boxplot_all.json', function(indata) {
 
         var yoff = 100;
                 var dx = ix * (cell_width + cell_buffer);
-                var dy = iy * cell_height - yoff;
+                var dy = iy * (cell_height + cell_buffer) - yoff;
                 return 'translate('
                     + dx.toString()
                     + ','
@@ -349,8 +349,9 @@ d3.json('boxplot_all.json', function(indata) {
         child_svg.append('path')
             .attr("d", line(datum))
             .attr("stroke", function () {
-                return d.entry == 1 ? '#bd0026' : '#525252' ;
+                return d.entry == 1 ? '#f16913' : '#525252' ;
             })
+            // # bd0026
             .attr("stroke-width", user_stroke_width)
             .style('opacity', 0)
             .style('display', 'none')
