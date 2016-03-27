@@ -387,7 +387,7 @@ d3.json('boxplot_all.json', function(indata) {
     ;
 
     var listx = 1280;
-    var listy = 80;
+    var listy = 200;
     var list_dy = 20;
     var list_font = 16;
 
@@ -398,6 +398,7 @@ d3.json('boxplot_all.json', function(indata) {
         .attr('cursor', 'pointer')
         .text('top 10+')
         .attr('font-weight', 'bold')
+        .attr('class', 'top10text')
     ;
 
     _.forEach(top10,function(name, i) {
@@ -413,6 +414,7 @@ d3.json('boxplot_all.json', function(indata) {
             .on('mouseout', function() {
                 mouseout({user: name})
             })
+            .attr('class', 'top10text')
         ;
     });
 
