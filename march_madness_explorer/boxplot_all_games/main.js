@@ -15,6 +15,8 @@ var top10 = [
     ,'lavarez'
     ,'magic'
     ,'glicko'
+    ,'jared-cross'
+    ,'net-prophet'
     ,'oneshiningmgf'
     ,'fivethirtyeight'
 ];
