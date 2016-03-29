@@ -21,6 +21,15 @@ var top10 = [
     ,'fivethirtyeight'
 ];
 
+var custom_list = _.map(top10, function(d) {
+    return d;
+});
+
+var listx = 1400;
+var listy = 120;
+var list_dy = 20;
+var list_font = 16;
+
 var xbuff = 0.1;
 
 var margin = {top: 60, right: 80, bottom: 20, left: 100},
@@ -96,6 +105,45 @@ function highlight_off(d) {
 
 }
 
+var reset_custom_list = function() {
+    custom_list = _.map(top10, function (d) {
+        return d;
+    });
+
+    update_custom_list();
+};
+
+var update_custom_list = function() {
+
+    console.log('custom_list', custom_list);
+
+    var s = svg.selectAll('.customlist')
+        .data(custom_list);
+
+    s.enter()
+        .append('text')
+        .attr('class', 'customlist')
+        .attr('cursor', 'pointer')
+        .attr('x', listx)
+        .attr('y', function(d, i) {
+            return listy + (i+1)*list_dy
+        })
+        .attr('font-size', list_font)
+        .on('mouseover', function(d) {
+            mouseover({user: d})
+        })
+        .on('mouseout', function(d) {
+            mouseout({user: d})
+        })
+        .text(function(d) {
+            console.log('text list', d);
+            return d;
+        });
+
+    s.exit().remove();
+};
+
+
 var current_selection = 'XXX';
 
 var changeHandler = function(event, ui) {
@@ -105,6 +153,8 @@ var changeHandler = function(event, ui) {
     //console.log('change handler d');
     current_selection = d;
     mouseover(d);
+    custom_list.push(d.user);
+    update_custom_list();
 };
 
 var setTags = function(availableTags) {
@@ -112,8 +162,6 @@ var setTags = function(availableTags) {
         source : availableTags,
         select : changeHandler
     })
-
-//    $("#tags").data("ui-autocomplete")._trigger("change")
 
 };
 
@@ -397,37 +445,19 @@ d3.json('boxplot_all.json', function(indata) {
         .attr('font-weight', 'bold')
     ;
 
-    var listx = 1280;
-    var listy = 200;
-    var list_dy = 20;
-    var list_font = 16;
+    update_custom_list();
 
     svg.append('text')
-        .attr('x', listx)
-        .attr('y', listy)
-        .attr('font-size', list_font)
         .attr('cursor', 'pointer')
-        .text('top 10+')
+        .attr('x', listx)
+        .attr('y', function(d, i) {
+            return listy + (i-1)*list_dy
+        })
+        .attr('font-size', list_font)
+        .on('click', reset_custom_list)
+        .text('reset list')
         .attr('font-weight', 'bold')
-        .attr('class', 'top10text')
     ;
-
-    _.forEach(top10,function(name, i) {
-        svg.append('text')
-            .attr('x', listx)
-            .attr('y', listy + (i+1)*list_dy)
-            .attr('font-size', list_font)
-            .attr('cursor', 'pointer')
-            .text(name)
-            .on('mouseover', function() {
-                mouseover({user: name})
-            })
-            .on('mouseout', function() {
-                mouseout({user: name})
-            })
-            .attr('class', 'top10text')
-        ;
-    });
 
 
 });

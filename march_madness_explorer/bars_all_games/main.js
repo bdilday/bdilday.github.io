@@ -146,9 +146,7 @@ var changeHandler = function(event, ui) {
     current_selection = d;
     mouseover(d);
     custom_list.push(d.user);
-
     update_custom_list();
-
 };
 
 var setTags = function(availableTags) {
