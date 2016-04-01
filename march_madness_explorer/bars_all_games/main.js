@@ -17,6 +17,7 @@ var top10 = [
     ,'glicko'
     ,'oneshiningmgf'
     ,'fivethirtyeight'
+    ,'vegas'
 ];
 
 

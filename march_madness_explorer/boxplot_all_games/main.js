@@ -19,6 +19,7 @@ var top10 = [
     ,'net-prophet'
     ,'oneshiningmgf'
     ,'fivethirtyeight'
+    ,'vegas'
 ];
 
 var custom_list = _.map(top10, function(d) {
