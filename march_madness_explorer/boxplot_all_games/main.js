@@ -35,7 +35,7 @@ var xbuff = 0.1;
 
 var margin = {top: 60, right: 80, bottom: 20, left: 100},
     width = 1500 - margin.left - margin.right,
-    height = 1200 - margin.top - margin.bottom;
+    height = 1600 - margin.top - margin.bottom;
 
 var whisker_stroke_width = 2;
 var cell_height = 200;
@@ -214,7 +214,10 @@ d3.json('boxplot_all.json', function(indata) {
         } else if(idx<62) {
             ix = 16*(idx-60) + 7.5;
             iy = 5;
-        };
+        } else {
+            ix = 32*(idx-62) + 15.5;
+            iy = 6;
+        }
 
         return {ix: ix, iy: iy};
     }
