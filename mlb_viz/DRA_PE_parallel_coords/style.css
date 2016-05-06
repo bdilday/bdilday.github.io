@@ -1,0 +1,195 @@
+    <style>
+    /* SVG styling */
+    
+    path {
+        fill: #CED8B6;
+    }
+    line {
+        stroke: #555;
+        stroke-width: 2px;
+    }
+    line#bestfit {
+        stroke: #ddd;
+        stroke-width: 2px;
+    }
+    #xAxis path,
+    #yAxis path,
+    #xAxis line,
+    #yAxis line {
+        stroke: #ccc;
+        fill: none;
+        shape-rendering: crispEdges;
+    }
+    text {
+        font-size: 12px;
+        fill: #888;
+    }
+    /* Document styling */
+    
+    body {
+        background-color: #ffffff;
+        font-family: helvetica, sans-serif;
+        font-weight: 100;
+    }
+    #wrapper {
+        width: 1200px;
+        left: 0px;
+        margin: 0 auto;
+        position: relative;
+    }
+    #chart {
+        position: absolute;
+        top: 30px;
+        left: 80px;
+        width: 825px;
+        /*margin: 25px auto;*/
+        overflow: scroll;
+    }
+    #parklist1 {
+        position: absolute;
+        top: 30px;
+        right: 120px;
+        width: 80px;
+        /*margin: 25px auto;*/
+        overflow: scroll;
+    }
+    #parklist2 {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        width: 80px;
+        /*margin: 25px auto;*/
+        overflow: scroll;
+    }
+    #title {
+        position: absolute;
+        top: 0;
+        left: 30px;
+        font-size: 16px;
+        letter-spacing: -2px;
+        line-height: 100%;
+    }
+    #about {
+        position: absolute;
+        top: 670px;
+        left: 300px;
+        width: 200px;
+        font-size: 12px;
+    }
+    #about .social {
+        margin-top: 5px;
+    }
+    #menu {
+        position: absolute;
+        top: 65px;
+        left: 30px;
+        width: 300px;
+    }
+    #menull {
+        position: absolute;
+        top: 65px;
+        left: 30px;
+        width: 30px;
+    }
+    #menulr {
+        position: absolute;
+        top: 65px;
+        left: 70px;
+        width: 30px;
+    }
+    #menurl {
+        position: absolute;
+        top: 65px;
+        left: 90px;
+        width: 30px;
+    }
+    #menurr {
+        position: absolute;
+        top: 65px;
+        left: 170px;
+        width: 30px;
+    }
+    #txt-input1 {
+        position: absolute;
+        top: 305px;
+        left: 30px;
+        width: 30px;
+        height: 30px;
+    }
+    #txt-input2 {
+        position: absolute;
+        top: 65px;
+        left: 140px;
+        width: 20px;
+        height: 30px;
+    }
+    #radio1 {
+        position: absolute;
+        top: 235px;
+        left: 140px;
+        width: 70px;
+        height: 30px;
+        font-size: 11px;
+    }
+    #playerList1 {
+        list-style: none;
+        position: absolute;
+        top: 185px;
+        left: 30px;
+        width: 120px;
+        background-color: #fff;
+        padding-bottom: 50px;
+        padding-top: 2px;
+        overflow: scroll;
+    }
+    #playerList2 {
+        list-style: none;
+        position: absolute;
+        top: 185px;
+        left: 150px;
+        width: 120px;
+        background-color: #fff;
+        padding-bottom: 50px;
+        padding-top: 2px;
+        overflow: scroll;
+    }
+    #playerList3 {
+        list-style: none;
+        position: absolute;
+        top: 185px;
+        left: 270px;
+        width: 120px;
+        background-color: #fff;
+        padding-bottom: 50px;
+        padding-top: 2px;
+    }
+    li,
+    h1,
+    h2 {
+        font-weight: 100;
+    }
+    h2 {
+        font-size: 11px;
+        margin: 0;
+        color: #666;
+    }
+    ul {
+        list-style: none;
+        font-size: 12px;
+        padding: 0;
+        margin-top: 3px;
+    }
+    li {
+        cursor: pointer;
+        padding-bottom: 2px;
+    }
+    li:hover {
+        color: #000;
+    }
+    li.preview {
+        font-weight: 400;
+    }
+    li.selected {
+        font-weight: bold;
+    }
+    </style>

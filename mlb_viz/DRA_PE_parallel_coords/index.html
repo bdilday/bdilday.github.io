@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8">
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>DRA Park Effects</title>
+
+
+</head>
+
+<body>
+
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-71774734-1', 'auto');
+    ga('send', 'pageview');
+
+</script>
+
+    <div id="wrapper">
+        <div id="chart">
+        </div>
+
+        <div id="parklist1">
+            <ul></ul>
+        </div>
+
+        <div id="parklist2">
+            <ul></ul>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script type="text/javascript">
+        // globals
+
+        var lines = {};
+        var xScale, yScale;
+        var xAxis = 'year',
+            yAxis = 'value';
+        var fdata;
+        var pdata = [];
+
+        var descriptions;
+        var bounds;
+
+        //// RENDERING FUNCTIONS
+
+        var valueline = d3.svg.line()
+            .x(function(d) {
+                return xScale(d[xAxis]);
+                //		return d[xAxis];
+            })
+            .y(function(d) {
+                return yScale(d[yAxis]);
+                //		return d[yAxis];
+            });
+
+        function highlight_on(player) {
+            lines[player.park]
+                .transition()
+                .duration(200)
+                .style("stroke-opacity", 1)
+                .style("stroke-width", 10)
+                //	.style("stroke", function (d) {return lcolors[player.name]})
+                .style("stroke", "red");
+            //	.moveToFront();
+        }
+
+        var off_duration = 600;
+
+        function highlight_off(player) {
+            lines[player.park]
+                .transition()
+                .duration(off_duration)
+                .style("stroke-opacity", 0.5)
+                .style("stroke-width", 1)
+                .style("stroke", d3.rgb(25, 25, 25));
+        }
+
+
+
+        function updateChart(init, bounds) {
+            updateScales(bounds);
+
+            // Also update the axes
+            d3.select('#xAxis')
+                .transition()
+                .call(makeXAxis);
+
+            d3.select('#yAxis')
+                .transition()
+                .call(makeYAxis);
+
+            // Update axis labels
+            d3.select('#xLabel')
+                .text(descriptions[xAxis]);
+
+            d3.select('#yLabel')
+                .text(descriptions[yAxis]);
+
+
+            d3.select("svg g.chart")
+                .selectAll(".players")
+                .transition(200)
+                .attr("d", function(d) {
+                    //	    console.log(d);
+                    return valueline(d.values);
+                })
+                //	.style("stroke",d3.rgb(25, 25, 25))
+                .style("fill", "none");
+
+
+            var npl = pdata.length;
+
+
+        }
+
+
+        function updateScales(bounds) {
+            xScale = d3.scale.linear()
+                .domain([bounds[xAxis].min, bounds[xAxis].max])
+                .range([20, 700]);
+
+            yScale = d3.scale.linear()
+                .domain([bounds[yAxis].min, bounds[yAxis].max])
+                .range([600, 100]);
+        }
+
+        function makeXAxis(s) {
+            s.call(d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom"));
+        }
+
+        function makeYAxis(s) {
+            s.call(d3.svg.axis()
+                .scale(yScale)
+                .orient("left"));
+        }
+
+
+
+        // HELPERS
+        function parseData(d) {
+            var newd = {};
+
+            var keys = _.keys(d[0]);
+            return _.map(d, function(d) {
+                var o = {};
+                _.each(keys, function(k) {
+                    if (k == 'park')
+                        o[k] = d[k];
+                    else if (k == 'value')
+                        o[k] = parseFloat(d[k]);
+                    else if (k == 'year')
+                        o[k] = parseInt(d[k]);
+                })
+                return o;
+                console.log("ll", lcolors);
+            });
+
+        }
+
+        function groupData(data) {
+            gkey = "park";
+            var tdata = {};
+            var tmp = {};
+            var allkeys = {};
+            pdata = [];
+            for (var i = 0; i < data.length; i++) {
+                d = data[i];
+                if (!(d[gkey] in tdata)) {
+                    tdata[d[gkey]] = [];
+                    pdata.push({
+                        "name": d[gkey],
+                        "year": d["year"],
+                        "value": d["value"]
+                    });
+                }
+
+                tmp = {};
+                tmp["year"] = d["year"];
+                tmp["value"] = d["value"];
+                tdata[d[gkey]].push(tmp);
+            }
+
+            ndata = [];
+            var t = {};
+
+            for (k in tdata) {
+
+                d = tdata[k];
+                tmp = {};
+                tmp["park"] = k;
+                tmp["values"] = []
+                for (var i = 0; i < d.length; i++) {
+                    t = {};
+                    t["year"] = d[i]["year"];
+                    t["value"] = d[i]["value"];
+                    //	    tmp["values"].push(d[i]);
+                    tmp["values"].push(t);
+                    //	    console.log(d[i]["time"], xScale(d[i]["time"]));
+                    //	    console.log(d[i]["eloRank"], yScale(d[i]["eloRank"]));
+                }
+
+                ndata.push(tmp);
+            }
+            return ndata;
+        }
+
+
+
+        function getBounds(d, paddingFactor) {
+            // Find min and maxes (for the scales)
+            paddingFactor = typeof paddingFactor !== 'undefined' ? paddingFactor : 1;
+
+
+            var keys = _.keys(d[0]),
+                b = {};
+            _.each(keys, function(k) {
+                b[k] = {};
+                _.each(d, function(d) {
+                    if (isNaN(d[k]))
+                        return;
+                    if (b[k].min === undefined || d[k] < b[k].min)
+                        b[k].min = d[k];
+                    if (b[k].max === undefined || d[k] > b[k].max)
+                        b[k].max = d[k];
+                });
+                b[k].max > 0 ? b[k].max *= paddingFactor : b[k].max /= paddingFactor;
+                b[k].min > 0 ? b[k].min /= paddingFactor : b[k].min *= paddingFactor;
+            });
+            //    console.log(b);
+            return b;
+        }
+
+
+        /*************************/
+        function main() {
+            d3.csv('dra_1983_2004_PE.csv', function(data) {
+                console.log('data', data);
+                var yrs =
+                    _.unique(_.map(data, function(d) {
+                        return parseInt(d.year);
+                    }));
+
+                console.log('yrs', yrs);
+
+                var xAxisOptions = ["year"];
+                var yAxisOptions = ["value"];
+
+                descriptions = {
+                    "year": "year",
+                    "value": "value"
+                };
+
+                var keys = _.keys(data[0]);
+                var data = parseData(data);
+
+                bounds = getBounds(data, 1);
+                updateScales(bounds);
+
+                var gdata = groupData(data);
+                console.log('gdata', gdata);
+
+                var parks = _.map(gdata, function(x) {
+                    return x.park;
+                });
+                parks.sort();
+                parks = _.map(parks, function(x) {
+                    return {
+                        "park": x
+                    }
+                });
+                var npark = parks.length;
+
+                d3.selectAll("#parklist1")
+                    .selectAll(".park-list-item")
+                    .data(parks.slice(0, npark / 2))
+                    .enter()
+                    .append("li")
+                    .text(function(d) {
+                        return d.park;
+                    })
+                    .style("font-size", "10px")
+                    .style("right", "10px")
+                    .on('mouseover', function(d) {
+                        d3.select('svg g.chart #parkLabel')
+                            .text(d.park)
+                            .transition()
+                            .style('fill', '#555')
+                            .style('opacity', 1)
+                            .style('font-size', "40px")
+                            .attr('x', xScale(Math.min(gdata[xAxis])))
+                            .attr('y', yScale(0.04));
+
+                        highlight_on(d);
+                    })
+                    .on('mouseout', function(d) {
+                        d3.select('svg g.chart #parkLabel')
+                            .transition()
+                            .duration(off_duration)
+                            .style('opacity', 0);
+                        highlight_off(d);
+                    });
+
+                d3.selectAll("#parklist2")
+                    .selectAll(".park-list-item")
+                    .data(parks.slice(npark / 2 + 1))
+                    .enter()
+                    .append("li")
+                    .text(function(d) {
+                        return d.park;
+                    })
+                    .style("font-size", "10px")
+                    .style("right", "10px")
+                    .on('mouseover', function(d) {
+                        d3.select('svg g.chart #parkLabel')
+                            .text(d.park)
+                            .transition()
+                            .style('fill', '#555')
+                            .style('opacity', 1)
+                            .style('font-size', "40px")
+                            .attr('x', xScale(Math.min(gdata[xAxis])))
+                            .attr('y', yScale(0.04));
+
+                        highlight_on(d);
+                    })
+                    .on('mouseout', function(d) {
+                        d3.select('svg g.chart #parkLabel')
+                            .transition()
+                            .duration(off_duration)
+                            .style('opacity', 0);
+
+                        highlight_off(d);
+                    });
+
+                // SVG AND D3 STUFF
+                var svg = d3.select("#chart")
+                    .append("svg")
+                    .attr("width", 1000)
+                    .attr("height", 640);
+
+                svg.append('g')
+                    .classed('chart', true)
+                    .attr('transform', 'translate(80, -60)');
+
+
+                // park name
+                d3.select('svg g.chart')
+                    .append('text')
+                    .attr({
+                        'id': 'parkLabel',
+                        'x': 60,
+                        'y': 60
+                    })
+                    .style({
+                        'font-size': '40px',
+                        'fill': '#ddd'
+                    });
+
+                d3.select('svg g.chart')
+                    .append('text')
+                    .attr({
+                        'id': 'parknamelabel',
+                        'x': 60,
+                        'y': 600
+                    })
+                    .style({
+                        'font-size': '12px',
+                        'fill': '#ddd'
+                    });
+
+                // Axis labels
+                d3.select('svg g.chart')
+                    .append('text')
+                    .attr({
+                        'id': 'xLabel',
+                        'x': 400,
+                        'y': 670,
+                        'text-anchor': 'middle'
+                    })
+                    .text(descriptions[xAxis]);
+
+                d3.select('svg g.chart')
+                    .append('text')
+                    .attr('transform', 'translate(-60, 330) rotate(-90)')
+                    .attr({
+                        'id': 'yLabel',
+                        'text-anchor': 'middle'
+                    })
+                    .text(descriptions[yAxis]);
+
+                var pointColour = ["red", "blue"];
+
+                d3.select('svg g.chart')
+                    .selectAll('circle')
+                    .data(data)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', function(d) {
+                        return isNaN(d[xAxis]) ?
+                            d3.select(this).attr('cx') :
+                            xScale(d[xAxis]);
+                    })
+                    .attr('cy', function(d) {
+                        return isNaN(d[yAxis]) ?
+                            d3.select(this).attr('cy') :
+                            yScale(d[yAxis]);
+                    })
+                    .attr('r', 2)
+                    .attr('fill', "#000000")
+                    .style('cursor', 'pointer')
+                    .on('mouseover', function(d) {
+                        console.log("mouseover", d);
+                        d3.select('svg g.chart #parkLabel')
+                            .text(d.park)
+                            .transition()
+                            .style('fill', '#555')
+                            .style('opacity', 1)
+                            .style('font-size', "40px")
+                            .attr('x', xScale(Math.min(gdata[xAxis])))
+                            .attr('y', yScale(0.04));
+                        d3.select('svg g.chart #parknamelabel')
+                            .text(d.name)
+                            .transition()
+                            .style('fill', '#555')
+                            .style('opacity', 1)
+                            .style('font-size', "12px")
+                            .style('font-weight', 'bold')
+                            .attr('x', xScale(Math.min(gdata[xAxis])))
+                            .attr('y', yScale(0.04));
+                        highlight_on(d);
+                    })
+                    .on('mouseout', function(d) {
+                        d3.select('svg g.chart #parkLabel')
+                            .transition()
+                            .duration(1500)
+                            .style('opacity', 0);
+                        highlight_off(d);
+                    });
+
+
+                var players = d3.select("svg g.chart")
+                    .selectAll(".parks")
+                    .data(gdata)
+                    .enter()
+                    .append("g")
+                    .attr("class", "parks");
+
+                players.append("path")
+                    .attr("class", "line")
+                    .attr("d", function(d) {
+                        //		console.log(d);
+                        lines[d.park] = d3.select(this);
+                        return valueline(d.values);
+                    })
+                    //	    .style("stroke", function(d) {return pointColour[d["isBatter"]]})
+                    .style("stroke", d3.rgb(25, 25, 25))
+                    .style("fill", "none")
+                    .style("stroke-opacity", 0.5)
+                    .style("stroke-width", 1);
+
+
+                // Render axes
+                d3.select('svg g.chart')
+                    .append("g")
+                    .attr('transform', 'translate(0, 630)')
+                    .attr('id', 'xAxis')
+                    .call(makeXAxis);
+
+                d3.select('svg g.chart')
+                    .append("g")
+                    .attr('id', 'yAxis')
+                    .attr('transform', 'translate(-10, 0)')
+                    .call(makeYAxis);
+            })
+        }
+
+
+        main();
+
+    </script>
+    <!-- <script src="js/main_test.js"></script> -->
+
+</body>
+
+</html>
