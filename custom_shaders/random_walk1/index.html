@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r78/three.js"></script>
+    <script src="./bower_components/three.js/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+<div id="container"></div>
+<script src="main.js"></script>
+
+<script type="x-shader/x-vertex" id="vertexshader">
+
+			uniform float scale;
+			attribute float size;
+			attribute vec3 customColor;
+
+			varying vec3 vColor;
+
+			void main() {
+				vColor = position;
+				vec4 mvPosition = modelViewMatrix * vec4( scale * position, 1.0 );
+				gl_PointSize = size * ( 300.0 / -mvPosition.z );
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+
+<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform vec3 color;
+			varying vec3 vColor;
+
+			void main() {
+				gl_FragColor = vec4(vColor, 1.0 );
+			}
+
+		</script>
+
+
+
+</body>
+</html>
