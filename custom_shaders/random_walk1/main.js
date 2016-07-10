@@ -5,7 +5,7 @@ var camera, scene, renderer;
 var mesh;
 var geometry;
 var segments = 100000;
-var timeResolution = 20; // changes per second
+var timeResolution = 5; // changes per second
 var positions, colors;
 var idx = 0;
 
