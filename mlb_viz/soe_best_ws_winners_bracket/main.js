@@ -282,7 +282,7 @@ var war_scatter_svg;
 
 
 /*********************************************************/
-d3.json('../data/soe_ws_bracket.json', function(data) {
+d3.json('soe_ws_bracket.json', function(data) {
     console.log('data', data);
 
     teams_data = {};
