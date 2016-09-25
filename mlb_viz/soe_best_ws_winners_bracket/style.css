@@ -1,4 +1,10 @@
 
+.main-label {
+    font: 14px sans-serif;
+    fill: #332222;
+    text-decoration: underline;
+}
+
 .matchup-label {
     font: 10px sans-serif;
     fill: #332222;

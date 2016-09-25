@@ -5,8 +5,11 @@
 var custom_list = [{'teamid': 'NYA', 'yearid': 1961}];
 var listx = -40;
 var listy = -20;
-var list_dy = 20;
+var list_dy = 40;
 var list_font = 10;
+
+var main_title_x = 90;
+var main_title_y = -30;
 
 var boxplot_xoff = 535;
 var boxplot_yoff = 230;
@@ -200,6 +203,17 @@ svg.append('text')
     .attr('y', low_seed_y)
     .text('low seed')
 ;
+
+
+svg.append('a')
+    .attr('href', 'http://www.sportsonearth.com/article/201543974/mlb-world-series-world-series-champions')
+    .append('text')
+    .attr('class', 'main-label')
+    .attr('x', main_title_x)
+    .attr('y', main_title_y)
+    .text('Sports on Earth - WS Winner bracket')
+;
+
 
 var interpolate_type = 'linear';
 
