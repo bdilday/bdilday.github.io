@@ -308,7 +308,7 @@ d3.json('soe_ws_bracket.json', function(data) {
         batting_stat_names.forEach(function(stat_name) {
             console.log(d, stat_name, d[stat_name]);
             d3.select('.text-high-value-' + stat_name)
-                .text(d[stat_name])
+                .text(teams_data[k][stat_name])
             ;
         });
 
@@ -538,6 +538,8 @@ d3.json('soe_ws_bracket.json', function(data) {
                 //    return s;
                 //})
 
+            var bs = batting_stat_names[idx-1];
+
             // stat value - low seed
             child_svg.append('text')
                 .text('low')
@@ -552,12 +554,12 @@ d3.json('soe_ws_bracket.json', function(data) {
                 .attr('y', function() {
                     return y(0) + 12;
                 })
-                .attr('class', 'text-low-value'+batting_stat_names[idx])
+                .attr('class', 'text-low-value'+bs)
             ;
 
             // stat value - high seed
             child_svg.append('text')
-                .text('high')
+                .text(batting_stat_names[idx])
                 .attr('font-size', 10)
                 .attr('text-anchor', 'middle')
                 .attr('opacity', function() {
@@ -569,7 +571,7 @@ d3.json('soe_ws_bracket.json', function(data) {
                 .attr('y', function() {
                     return y(0) - 5 - cell_height;
                 })
-                .attr('class', 'text-high-value-'+batting_stat_names[idx])
+                .attr('class', 'text-high-value-'+bs)
             ;
 
         };
