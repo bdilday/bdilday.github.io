@@ -1,4 +1,9 @@
 
+.matchup-label {
+    font: 10px sans-serif;
+    fill: #332222;
+}
+
 .axis text {
     font: 10px sans-serif;
 }

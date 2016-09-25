@@ -120,7 +120,9 @@ BOXPLOT_FILL = '#d9d9d9';
 BOXPLOT_FILL = '#6baed6';
 var HIGH_SEED = 1;
 var LOW_SEED = 0;
-var color_map = {HIGH_SEED: 'steelblue', LOW_SEED: '#4d4d4d'};
+var color_map = {};
+color_map[HIGH_SEED] = 'steelblue';
+color_map[LOW_SEED] =  '#4d4d4d';
 
 var batting_stat_names = ['h', 'xb', 'hr', 'bavg', 'obp', 'slg'];
 
@@ -182,6 +184,23 @@ var svg = d3.select("body").append("svg")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     ;
 
+var high_seed_x = 700;
+var high_seed_y = -30;
+svg.append('text')
+    .attr('class', 'matchup-label high-seed-label')
+    .attr('x', high_seed_x)
+    .attr('y', high_seed_y)
+    .text('high seed')
+;
+var low_seed_x = 700;
+var low_seed_y = -10;
+svg.append('text')
+    .attr('class', 'matchup-label low-seed-label')
+    .attr('x', low_seed_x)
+    .attr('y', low_seed_y)
+    .text('low seed')
+;
+
 var interpolate_type = 'linear';
 
 var line = d3.svg.line()
@@ -209,7 +228,7 @@ function highlight_circle_on(d) {
         .transition()
         .duration(ra_rs_circle_duration)
         .attr('r', ra_rs_circle_r_highlight_on)
-        .style('fill', '#e31a1c')
+        .style('fill', color_map[d.highlow])
     ;
 };
 
@@ -227,24 +246,15 @@ var mouseout = function (d) {
     console.log('mouseout', d);
     highlight_off(d);
     highlight_circle_off(d);
-
 };
 
 var mouseover = function (d) {
     console.log('mouseover', d);
     highlight_on(d);
     highlight_circle_on(d);
-    //setLabel(d);
+
 };
 
-var setLabel = function (d) {
-    //console.log('set lab', d);
-
-    svg.selectAll('#label')
-        .transition()
-        .duration(200)
-        .text(d.user.toString());
-};
 
 function datum_to_key(d) {
     return d.teamid + '-' + d.yearid;
@@ -255,6 +265,7 @@ function highlight_on(d) {
     var a = svg.selectAll('.' + datum_to_key(d))
             .transition()
             .duration(200)
+            .style('stroke', color_map[d.highlow])
             .style('opacity', 1)
             .style('display', 'block')
 
@@ -267,16 +278,14 @@ function highlight_off(d) {
     svg.selectAll('.' + key)
         .transition()
         .duration(200)
-        .style('opacity', 0.0)
+        .style('opacity', 0)
         .style('display', 'none')
     ;
 
-d3.select('.text-low-value-' + 'bavg')
-    .text('AAA');
-
 }
 
-
+var game_array = [];
+var game_map = {};
 var teams_data = {};
 var war_scatter_svg;
 
@@ -303,23 +312,50 @@ d3.json('soe_ws_bracket.json', function(data) {
     });
 
 
+    var setLabel = function (d) {
+        console.log('set lab', d, teams_data[datum_to_key(d)]);
+        var team_name = teams_data[datum_to_key(d)].team_name;
+        var sel = d.highlow === 1 ? '.high-seed-label' : '.low-seed-label';
+        svg.selectAll(sel)
+            .transition()
+            .duration(200)
+            .text('(' + d.seed + ') ' + team_name + ' ' + d.yearid)
+            .style('fill', color_map[d.highlow])
+        ;
+    };
+
     function set_stat_value_text(d, stat_name) {
+
         var k = datum_to_key(d);
+        var sel = d.highlow === 1 ? '.text-high-value-' : '.text-low-value-';
+
         batting_stat_names.forEach(function(stat_name) {
             console.log(d, stat_name, d[stat_name]);
-            d3.select('.text-high-value-' + stat_name)
+            d3.select(sel + stat_name)
                 .text(teams_data[k][stat_name])
             ;
         });
 
     }
 
+    function game_datum_to_key(d) {
+        var s = '';
+        s += d.idx;
+        s += '-';
+        s += d.highlow;
+        return s;
+    }
+
+    function get_other_seed_from_matchup(d) {
+        var other_seed = d.highlow === 1 ? 0 : 1;
+        var v = game_map[game_datum_to_key({idx: d.idx, highlow: other_seed})];
+        console.log('other seed', d, v);
+        return v;
+    }
+
     function make_bracket() {
 
         console.log('custom_list', custom_list);
-
-        var tmp = [];
-        console.log('bracket', data.games, tmp);
 
         _.forOwn(data.games, function(d) {
 
@@ -331,7 +367,8 @@ d3.json('soe_ws_bracket.json', function(data) {
                 yearid: custom_list[d.high_seed-1].yearid,
                 highlow: HIGH_SEED
             };
-            tmp.push(v);
+            game_array.push(v);
+            game_map[game_datum_to_key(v)] = v;
             v = {
                 idx: d.idx,
                 tier: d.tier,
@@ -340,12 +377,12 @@ d3.json('soe_ws_bracket.json', function(data) {
                 yearid: custom_list[d.low_seed-1].yearid,
                 highlow: LOW_SEED
             };
-            tmp.push(v);
+            game_array.push(v);
+            game_map[game_datum_to_key(v)] = v;
         });
-        console.log('bracket', custom_list, data['games'], tmp);
 
         var s = svg.selectAll('.customlist')
-            .data(tmp);
+            .data(game_array);
 
         s.enter()
             .append('text')
@@ -364,15 +401,26 @@ d3.json('soe_ws_bracket.json', function(data) {
             })
             .attr('font-size', list_font)
             .on('mouseover', function(d) {
-                mouseover(d);
                 clear_war_scatter();
-                make_war_scatter(d);
+
+                mouseover(d);
                 set_stat_value_text(d);
+                setLabel(d);
+
+                var v = get_other_seed_from_matchup(d);
+                mouseover(v);
+                set_stat_value_text(v);
+                setLabel(v);
+
+                make_war_scatter([d, v]);
 
             })
             .on('mouseout', function(d) {
                 clear_war_scatter();
                 mouseout(d);
+
+                var v = get_other_seed_from_matchup(d);
+                mouseout(v);
                 //clear_war_scatter(d);
             })
             .text(function(d) {
@@ -554,7 +602,7 @@ d3.json('soe_ws_bracket.json', function(data) {
                 .attr('y', function() {
                     return y(0) + 12;
                 })
-                .attr('class', 'text-low-value'+bs)
+                .attr('class', 'text-low-value-'+bs)
             ;
 
             // stat value - high seed
@@ -612,7 +660,7 @@ d3.json('soe_ws_bracket.json', function(data) {
             child_svg.append('path')
                 .attr("d", line(datum))
                 .attr("stroke", function () {
-                    return 'red';
+                    return '#332222';
                 })
                 // # bd0026
                 .attr("stroke-width", user_stroke_width)
@@ -673,21 +721,33 @@ d3.json('soe_ws_bracket.json', function(data) {
         e.remove();
     }
 
-    function make_war_scatter(d) {
+    function make_war_scatter(array_of_ds) {
 
-        var k = datum_to_key(d);
+        if (! array_of_ds.hasOwnProperty('length')) {
+            array_of_ds = [array_of_ds];
+        };
 
-        console.log('make_war_scatter', teams_data[k]);
-
-        var this_data = _.map(_.range(0, 12), function(idx) {
-            return {
-                name: teams_data[k]['top_name' + idx],
-                war: teams_data[k]['top_war' + idx],
-                war_off: teams_data[k]['top_war_off' + idx],
-                war_def: teams_data[k]['top_war_def' + idx]
-            };
+        var ks = _.map(array_of_ds, function(d) {
+            return datum_to_key(d);
         });
 
+        var this_data = [];
+
+        ks.forEach(function(k, i) {
+            console.log('make_war_scatter', teams_data[k]);
+            var d = array_of_ds[i];
+            _.forEach(_.range(0, 12), function(idx) {
+                this_data.push(
+                    {
+                        name: teams_data[k]['top_name' + idx],
+                        war: teams_data[k]['top_war' + idx],
+                        war_off: teams_data[k]['top_war_off' + idx],
+                        war_def: teams_data[k]['top_war_def' + idx],
+                        highlow: d.highlow
+                    }
+                );
+            })
+        });
 
         var e = war_scatter_svg.selectAll('.war-scatter-points')
             .data(this_data)
@@ -706,11 +766,6 @@ d3.json('soe_ws_bracket.json', function(data) {
                 return d.name;
             })
             .style("text-anchor", "middle")
-
-            .attr("stroke", function () {
-                return '#33222';
-            })
-            // # bd0026
             .style('font-face', 'sans-serif')
             .style('font-size', war_scatter_font_size)
             .attr('x', function(d) {
@@ -721,7 +776,10 @@ d3.json('soe_ws_bracket.json', function(data) {
                 //console.log('ra_plus', d.ra_plus, ra_rs_yscale(d.ra_plus));
                 return war_scatter_yscale(d.war_def)
             })
-            .attr("stroke-width", 1)
+            .style('stroke', function(d) {
+                return color_map[d.highlow];
+            })
+            .attr("stroke-width", 0.5)
             .style('opacity', 1)
             ;
     g.append('circle')
@@ -732,7 +790,7 @@ d3.json('soe_ws_bracket.json', function(data) {
                 return war_scatter_yscale(d.war_def)
             })
             .attr('r', 1)
-            .fill('#332222')
+            .style('fill', '#332222')
         ;
 
     }
