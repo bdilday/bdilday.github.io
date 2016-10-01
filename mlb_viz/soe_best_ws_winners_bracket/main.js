@@ -111,8 +111,8 @@ var cell_height = 140;
 var cell_width = 32;
 var cell_buffer = 12;
 
-var bracket_width = 48;
-var bracket_buffer = 8;
+var bracket_width = 56;
+var bracket_buffer = 12;
 var bracket_y_buffer = 36;
 
 var user_stroke_width = 3;
@@ -448,6 +448,7 @@ d3.json('soe_ws_bracket.json', function(data) {
     console.log('teams_data', teams_data);
 
     console.log('stats_data', stats_data);
+
 
         var idx_to_ixy = function(d) {
 
