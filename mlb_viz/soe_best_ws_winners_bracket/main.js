@@ -2,6 +2,8 @@
  * Created by bdilday on 9/18/16.
  */
 
+var bright_orange = '#fd8d3c';
+
 var custom_list = [{'teamid': 'NYA', 'yearid': 1961}];
 var listx = -40;
 var listy = -20;
@@ -121,11 +123,14 @@ var BOXPLOT_FILL = '#4292c6';
 
 BOXPLOT_FILL = '#d9d9d9';
 BOXPLOT_FILL = '#6baed6';
+BOXPLOT_FILL = '#f9f9f9';
 var HIGH_SEED = 1;
 var LOW_SEED = 0;
 var color_map = {};
+
 color_map[HIGH_SEED] = 'steelblue';
-color_map[LOW_SEED] =  '#4d4d4d';
+//color_map[LOW_SEED] =  '#4d4d4d';
+color_map[LOW_SEED] =  bright_orange;
 
 var batting_stat_names = ['h', 'xb', 'hr', 'bavg', 'obp', 'slg'];
 
