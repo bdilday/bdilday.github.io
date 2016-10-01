@@ -1,6 +1,6 @@
 
 
-var bar_color = '#30570b0';
+var bar_color = '#0570b0';
 var margin = {top: 60, right: 80, bottom: 20, left: 100};
 
 var cell_width = 60;
