@@ -451,19 +451,38 @@ d3.json('soe_ws_bracket.json', function(data) {
 
         var idx_to_ixy = function(d) {
 
-            if (d.tier === 1) {
-                ix = 1;
-                iy = d.idx;
+            var start_x = 1;
+            var start_y = 1;
+            var delta_x, delta_y;
+            var round_number = parseInt((d.idx-1)/32) + 1;
+
+            if (d.tier === 1 || d.tier === 4) {
+                start_x = 0;
+                delta_x = round_number;
+            } else {
+                start_x = 9;
+                delta_x = -round_number;
             }
-            if (d.tier === 4) {
-                ix = 1;
-                iy = d.idx - 16;
+
+            if (d.tier === 1 || d.tier == 2) {
+                start_y = 1 + 0.5 * (round_number - 1);
+            } else {
+                start_y = 1 + 8 + 0.5 * (round_number - 1);
             }
-            if (d.tier === 2 || d.tier === 3) {
-                ix = 9;
-                iy = d.idx - 8;
+
+
+            if (round_number==1) {
+                delta_y = (d.idx-1) % 8
+                delta_y *= 1;
+            } else if (round_number==2) {
+                delta_y = (d.idx-33) % 4
+                delta_y *= 2;
             }
-            console.log(d, d.tier, ix, iy);
+
+
+            var ix = start_x + delta_x;
+            var iy = start_y + delta_y;
+            console.log(d, d.tier, start_x, delta_x, ix, start_y, delta_y, iy);
 
             return {ix: ix, iy: iy};
         };

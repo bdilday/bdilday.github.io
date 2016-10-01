@@ -196,17 +196,29 @@ class myc:
         lines = open('seeds.txt').readlines()
         tier = 1
         idx = 0
+        round_number = 0
         ans = {}
         for l in lines:
             tmp = {}
             s = l.strip('\n')
+            print s
             if len(s)==0:
                 tier += 1
+                if tier == 5:
+                    tier = 1
+                    round_number += 1
                 continue
             idx += 1
-            v = int(s)
-            high_seed = v
-            low_seed = 65 - v
+            st = s.split(',')
+            if len(st)==1:
+                v = int(s)
+                high_seed = v
+                low_seed = 65 - v
+            else:
+                v1, v2 = st
+                high_seed = int(v1)
+                low_seed = int(v2)
+
             tmp['low_seed'] = low_seed
             tmp['high_seed'] = high_seed
             tmp['idx'] = idx
