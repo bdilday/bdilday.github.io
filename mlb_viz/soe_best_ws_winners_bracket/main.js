@@ -10,9 +10,13 @@ var listy = -20;
 var list_dy = 40;
 var list_font = 10;
 
+var position_label_fontsize = 11;
+
 var main_title_x = 90;
 var main_title_y = -30;
 
+var stats_table_xoff = 1000;
+var stats_table_yoff = 425;
 var boxplot_xoff = 535;
 var boxplot_yoff = 230;
 
@@ -27,6 +31,9 @@ var ra_rs_circle_r_highlight_off = 2;
 var ra_rs_circle_duration = 500;
 
 var war_scatter_font_size = 10;
+
+var position_labels = ['C', '1B', '2B', '3B', 'SS', 'LF', 'CF', 'RF'];
+
 
 var seed_list = [
     {idx: 1, teamid: 'NYA', yearid: 1998, w: 114},
@@ -307,7 +314,7 @@ var game_array = [];
 var game_map = {};
 var teams_data = {};
 var war_scatter_svg;
-
+var stats_table_svg;
 
 /*********************************************************/
 d3.json('soe_ws_bracket.json', function(data) {
@@ -349,9 +356,13 @@ d3.json('soe_ws_bracket.json', function(data) {
         var sel = d.highlow === 1 ? '.text-high-value-' : '.text-low-value-';
 
         batting_stat_names.forEach(function(stat_name) {
-            console.log(d, stat_name, d[stat_name]);
+            //console.log(d, stat_name, d[stat_name]);
             d3.select(sel + stat_name)
                 .text(teams_data[k][stat_name])
+                .style('fill', function() {
+                    return color_map[d.highlow];
+                })
+
             ;
         });
 
@@ -415,7 +426,6 @@ d3.json('soe_ws_bracket.json', function(data) {
             .attr('y', function(d, i) {
                 var ixy = idx_to_ixy(d);
                 var iy = d.highlow === LOW_SEED ? ixy.iy + 0.35 : ixy.iy;
-                console.log(d, iy);
                 return listy + (iy-1)*(bracket_y_buffer);
             })
             .attr('font-size', list_font)
@@ -425,11 +435,13 @@ d3.json('soe_ws_bracket.json', function(data) {
                 mouseover(d);
                 set_stat_value_text(d);
                 setLabel(d);
+                update_table(d);
 
                 var v = get_other_seed_from_matchup(d);
                 mouseover(v);
                 set_stat_value_text(v);
                 setLabel(v);
+                update_table(v);
 
                 make_war_scatter([d, v]);
 
@@ -488,7 +500,7 @@ d3.json('soe_ws_bracket.json', function(data) {
 
             var ix = start_x + delta_x;
             var iy = start_y + delta_y;
-            console.log(d, d.tier, start_x, delta_x, ix, start_y, delta_y, iy);
+          //  console.log(d, d.tier, start_x, delta_x, ix, start_y, delta_y, iy);
 
             return {ix: ix, iy: iy};
         };
@@ -714,6 +726,117 @@ d3.json('soe_ws_bracket.json', function(data) {
         };
 
 
+    function update_table(d) {
+
+        var k = datum_to_key(d);
+        var player_data = _.map(_.range(2, 10), function(idx) {
+            console.log('idx', idx);
+            return {'player_stats': teams_data[k]['fld' + idx.toString()]};
+        });
+
+        position_labels.forEach(function(lab, idx) {
+            var sel = d.highlow === 1 ? '.positionLabelHigh' : '.positionLabelLow';
+            sel += '-' + lab;
+
+            stats_table_svg.selectAll(sel)
+                .text(function() {
+                    var datum = teams_data[k];
+                    var j = 'fld' + (idx + 2).toString();
+                    console.log('positionLabel', k, datum, j);
+                    var s = datum[j].player_name;
+                    var bavg = datum[j].bavg.toFixed(3);
+                    var obp = datum[j].obp.toFixed(3);
+                    var slg = datum[j].slg.toFixed(3);
+                    if (d.highlow === 0) {
+                        s = bavg + ' / ' + obp + ' / ' + slg + ' ' + s;
+                    } else {
+                        s = s + ' ' + bavg + ' / ' + obp + ' / ' + slg + ' ' ;
+                    }
+
+                return s;
+                })
+                .style('fill', function() {
+                    return color_map[d.highlow];
+                })
+            ;
+
+        });
+
+
+    }
+
+    function init_table() {
+        stats_table_svg = svg.append('g')
+            .attr('transform', function() {
+                var dx = stats_table_xoff;
+                var dy = stats_table_yoff;
+                return 'translate('
+                    + dx.toString()
+                    + ','
+                    + dy.toString() + ')';
+            });
+
+
+        stats_table_svg.selectAll('.positionLabel')
+            .data(position_labels)
+            .enter()
+            .append('text')
+            .style('font-size', position_label_fontsize)
+            .style('font-weight', 'bold')
+            .attr('class', 'positionLabel')
+            .text(function(d, i) {
+                console.log('positionLabel', d);
+                return d;
+            })
+            .attr('text-anchor', 'middle')
+            .attr('y', function(d, i) {
+                return i*20;
+            });
+
+        var dx = 25;
+        stats_table_svg.selectAll('.positionLabelHigh')
+            .data(position_labels)
+            .enter()
+            .append('text')
+            .style('font-size', position_label_fontsize)
+            .style('font-weight', 'bold')
+            .attr('class', function(d) {
+                return 'positionLabelHigh positionLabelHigh-' + d;
+            })
+            .text(function(d, i) {
+                return d + 'home';
+            })
+            .attr('x', function(d, i) {
+                return -dx;
+            })
+            .attr('text-anchor', 'end')
+            .attr('y', function(d, i) {
+                return i*20;
+            });
+
+        stats_table_svg.selectAll('.positionLabelLow')
+            .data(position_labels)
+            .enter()
+            .append('text')
+            .style('font-size', position_label_fontsize)
+            .style('font-weight', 'bold')
+            .attr('class', function(d) {
+                return 'positionLabelLow positionLabelLow-' + d;
+            })
+            .text(function(d, i) {
+                return d + 'low';
+            })
+            .attr('x', function(d, i) {
+                return dx;
+            })
+            .attr('text-anchor', 'start')
+            .attr('y', function(d, i) {
+                return i*20;
+            });
+
+
+    }
+
     function init_war_scatter() {
         war_scatter_svg = svg.append('g')
             .attr('transform', function() {
@@ -764,7 +887,7 @@ d3.json('soe_ws_bracket.json', function(data) {
 
         if (! array_of_ds.hasOwnProperty('length')) {
             array_of_ds = [array_of_ds];
-        };
+        }
 
         var ks = _.map(array_of_ds, function(d) {
             return datum_to_key(d);
@@ -773,7 +896,7 @@ d3.json('soe_ws_bracket.json', function(data) {
         var this_data = [];
 
         ks.forEach(function(k, i) {
-            console.log('make_war_scatter', teams_data[k]);
+            //console.log('make_war_scatter', teams_data[k]);
             var d = array_of_ds[i];
             _.forEach(_.range(0, 12), function(idx) {
                 this_data.push(
@@ -791,7 +914,6 @@ d3.json('soe_ws_bracket.json', function(data) {
         var e = war_scatter_svg.selectAll('.war-scatter-points')
             .data(this_data)
             .enter();
-
 
         var g = e.append('g')
             .attr('class', function(d) {
@@ -932,6 +1054,7 @@ d3.json('soe_ws_bracket.json', function(data) {
 
     }
 
+    init_table();
     init_war_scatter();
     make_ra_rs();
     make_bracket();
