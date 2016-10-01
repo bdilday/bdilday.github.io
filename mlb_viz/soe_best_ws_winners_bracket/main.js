@@ -199,16 +199,16 @@ var svg = d3.select("body").append("svg")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     ;
 
-var high_seed_x = 700;
-var high_seed_y = -30;
+var high_seed_x = 800;
+var high_seed_y = -30 + 10;
 svg.append('text')
     .attr('class', 'matchup-label high-seed-label')
     .attr('x', high_seed_x)
     .attr('y', high_seed_y)
     .text('high seed')
 ;
-var low_seed_x = 700;
-var low_seed_y = -10;
+var low_seed_x = 800;
+var low_seed_y = -10 + 10;
 svg.append('text')
     .attr('class', 'matchup-label low-seed-label')
     .attr('x', low_seed_x)
@@ -346,6 +346,7 @@ d3.json('soe_ws_bracket.json', function(data) {
             .transition()
             .duration(200)
             .text('(' + d.seed + ') ' + team_name + ' ' + d.yearid)
+            .style('font-size', 16)
             .style('fill', color_map[d.highlow])
         ;
     };
