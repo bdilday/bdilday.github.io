@@ -66,16 +66,19 @@ d3.json('lineups.json', function(data) {
     });
 
 
+    var era_list = ['all', '1913-1919',
+        '1920-1940', '1946-1967',
+        '1973-1992', '1993-2002', '2006-2014']
+
     function make_cell(obj) {
         var data = obj.data;
         var year = obj.year;
         var idx_x = obj.position_idx-1;
 
         var idx_y;
-        if (year !== 'all') {
-            idx_y = obj.year - MIN_YEAR + 1;
-        } else {
-            idx_y = 0;
+        idx_y = era_list.indexOf(year);
+        if (idx_y === -1) {
+            idx_y = obj.year - MIN_YEAR + 7;
         }
 
         var child_svg = svg.append('g')
@@ -176,22 +179,29 @@ d3.json('lineups.json', function(data) {
         ;
     }
 
-    yr = 'all';
+
     var this_data = {};
-    _.forEach(_.range(1, 10+1), function(position_idx) {
-        this_data[position_idx] = [];
+    era_list.forEach(function(yr) {
+        this_data = {};
+
+        _.forEach(_.range(1, 10+1), function(position_idx) {
+            this_data[position_idx] = [];
+        });
+
+        _.forEach(data[yr], function(d) {
+            var position_idx = d.position_idx;
+            this_data[position_idx].push(d);
+        });
+
+        _.forEach(_.range(1, 10+1), function(position_idx) {
+            //console.log(yr, position_idx, this_data[position_idx]);
+            var obj = {year: yr, data: this_data[position_idx], position_idx: position_idx};
+            make_cell(obj);
+        });
+
     });
 
-    _.forEach(data[yr], function(d) {
-        var position_idx = d.position_idx;
-        this_data[position_idx].push(d);
-    });
 
-    _.forEach(_.range(1, 10+1), function(position_idx) {
-        //console.log(yr, position_idx, this_data[position_idx]);
-        var obj = {year: yr, data: this_data[position_idx], position_idx: position_idx};
-        make_cell(obj);
-    });
 
     var yr1 = 1913;
     var yr2 = 2015;
