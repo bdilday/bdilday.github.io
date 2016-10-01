@@ -6,7 +6,7 @@ var bright_orange = '#fd8d3c';
 
 var custom_list = [{'teamid': 'NYA', 'yearid': 1961}];
 var listx = -40;
-var listy = -20;
+var listy = -0;
 var list_dy = 40;
 var list_font = 10;
 
