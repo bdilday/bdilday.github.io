@@ -1,5 +1,6 @@
 
 
+var bar_color = '#30570b0';
 var margin = {top: 60, right: 80, bottom: 20, left: 100};
 
 var cell_width = 60;
@@ -127,7 +128,7 @@ d3.json('lineups.json', function(data) {
                 }
                 return v;
             })
-            .attr('fill', 'steelblue')
+            .attr('fill', bar_color)
             .style('opacity', 0.5)
             .attr('stroke-width', 1)
             .attr('stroke', 'black')
