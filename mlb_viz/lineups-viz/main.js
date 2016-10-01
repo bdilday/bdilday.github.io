@@ -5,7 +5,7 @@ var margin = {top: 60, right: 80, bottom: 20, left: 100};
 
 var cell_width = 60;
 var cell_height = 50;
-var cell_rows = 104;
+var cell_rows = 112;
 var cell_columns = 10;
 var cell_vertical_buffer = 0;
 var cell_horizontal_buffer = 0;
