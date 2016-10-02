@@ -401,13 +401,13 @@ d3.json('lineups.json', function(data) {
         svg.append('text')
             .attr('x', 200)
             .attr('y', 300)
-            .style('font-size', 4)
+            .style('font-size', 14)
             .text('gamma')
             .attr('class', 'gamma-label')
         ;
     }
 
-//    make_orientation_labels();
+    make_orientation_labels();
 
     make_year_label();
     make_year_fixed_labels();
