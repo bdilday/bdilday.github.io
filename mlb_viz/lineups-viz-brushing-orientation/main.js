@@ -85,7 +85,7 @@ var position_string = {
 };
 
 
-var highlighted_year = -1;
+var highlighted_year = -2;
 var data_delta;
 
 d3.json('lineups.json', function(data) {
@@ -455,11 +455,11 @@ d3.json('lineups.json', function(data) {
             svg.select('.brusher-rect-' + highlighted_year)
                 .attr('fill', bar_color)
             ;
-            highlighted_year = this_year;
-            svg.select('.brusher-rect-' + highlighted_year)
+            svg.select('.brusher-rect-' + this_year)
                 .attr('fill', bright_orange)
             ;
         }
+        highlighted_year = this_year;
 
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
