@@ -427,20 +427,22 @@ d3.json('lineups.json', function(data) {
             return ;
         }
 
-        //if (y<-50) {
-        //    y = -50;
-        //}
-        //if (y>50) {
-        //    y = 50;
-        //}
-        //var v = beta_scale(y);
-        //update_row(parseInt(v));
+        var z = gamma;
+        if (z<-50) {
+            z = -50;
+        }
+        if (z>50) {
+            z = 50;
+        }
+        var v = beta_scale(z);
+        update_row(parseInt(v));
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
         d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
     }
 
 
-    window.addEventListener('deviceorientation', handleOrientation);
+//    window.addEventListener('deviceorientation', handleOrientation);
+    window.addEventListener('devicemotion', handleOrientation);
 
 });
