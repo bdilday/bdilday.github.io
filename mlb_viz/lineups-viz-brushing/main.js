@@ -399,7 +399,7 @@ d3.json('lineups.json', function(data) {
         ;
     }
 
-    make_orientation_labels();
+//    make_orientation_labels();
 
     make_year_label();
     make_year_fixed_labels();
@@ -429,6 +429,6 @@ d3.json('lineups.json', function(data) {
      //   d3.select('.gamma-label').text('GAMMA: ' + y.toString());
     }
 
-    window.addEventListener('deviceorientation', handleOrientation);
+  //  window.addEventListener('deviceorientation', handleOrientation);
 
 });
