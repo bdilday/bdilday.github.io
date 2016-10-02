@@ -1,6 +1,8 @@
 
 
 var bar_color = '#045a8d';
+var bright_orange = '#fd8d3c';
+
 var margin = {top: 60, right: 80, bottom: 20, left: 100};
 
 var cell_width = 60;
@@ -119,6 +121,10 @@ d3.json('lineups.json', function(data) {
                 })
                 .on('mouseover', function() {
                     update_row(year);
+                    d3.select(this).attr('fill', bright_orange);
+                })
+                .on('mouseout', function() {
+                    d3.select(this).attr('fill', bar_color);
                 })
             ;
         });
