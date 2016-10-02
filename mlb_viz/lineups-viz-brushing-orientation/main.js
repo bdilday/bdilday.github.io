@@ -431,6 +431,15 @@ d3.json('lineups.json', function(data) {
 
     make_brush();
 
+    if (!window.DeviceOrientationEvent) {
+
+    }
+
+    svg.append('text')
+        .attr('x', 140)
+        .attr('y', -30)
+        .text('view on mobile (landscape) to use interaction')
+    ;
     function handleOrientation(event) {
         var alpha = event.alpha;
         var beta = event.beta;  // In degree in the range [-180,180]
