@@ -1,5 +1,7 @@
 
 
+screen.lockOrientation('landscape');
+
 var bar_color = '#045a8d';
 var bright_orange = '#fd8d3c';
 
@@ -399,7 +401,7 @@ d3.json('lineups.json', function(data) {
         ;
 
         svg.append('text')
-            .attr('x', 200)
+            .attr('x', 100)
             .attr('y', 300)
             .style('font-size', 14)
             .text('gamma')
@@ -439,7 +441,7 @@ d3.json('lineups.json', function(data) {
         d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
     }
 
-    screen.lockOrientation('landscape');
+
     window.addEventListener('deviceorientation', handleOrientation);
 
 });
