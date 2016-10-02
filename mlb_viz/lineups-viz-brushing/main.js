@@ -417,7 +417,13 @@ d3.json('lineups.json', function(data) {
             return ;
         }
 
-        var v = beta_scale(x);
+        if (y<-50) {
+            y = -50;
+        }
+        if (y>50) {
+            y = 50;
+        }
+        var v = beta_scale(y);
         update_row(parseInt(v));
         d3.select('.beta-label').text('BETA: ' + x + ' ' + v.toString());
      //   d3.select('.gamma-label').text('GAMMA: ' + y.toString());
