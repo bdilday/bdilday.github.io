@@ -408,7 +408,7 @@ d3.json('lineups.json', function(data) {
         ;
 
         svg.append('text')
-            .attr('x', 140)
+            .attr('x', 100)
             .attr('y', 350)
             .style('font-size', 14)
             .text('argval')
@@ -439,8 +439,8 @@ d3.json('lineups.json', function(data) {
         var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
 
-        if (absval > 50) {
-            absval = 50;
+        if (absval < 40) {
+            absval = 40;
         }
 
         var argval = sign * (90 - absval);
