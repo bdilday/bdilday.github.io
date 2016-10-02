@@ -125,7 +125,7 @@ d3.json('lineups.json', function(data) {
                 .attr('y', function() {
                     return year_counter * brush_cell_height;
                 })
-                .attr('class', 'brush-rect-' + year)
+                .attr('class', 'brusher-rect-' + year)
                 .on('mouseover', function() {
                     update_row(year);
                     d3.select(this).attr('fill', bright_orange);
