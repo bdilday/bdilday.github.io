@@ -30,11 +30,15 @@ var year_label_yoff_f2 = 505;
 var MIN_YEAR = 1913;
 var MAX_YEAR = 2014;
 
+
 var width = cell_columns*cell_width - margin.left - margin.right;
 
 var width = 1200;
 var height = cell_rows*cell_height - margin.top - margin.bottom;
 
+var beta_scale = d3.scale.linear()
+    .range([MIN_YEAR, MAX_YEAR])
+    .domain([-50, 50]);
 
 var diff_yscale = d3.scale.linear()
         .range([-cell_height/2, +cell_height/2])
@@ -409,8 +413,14 @@ d3.json('lineups.json', function(data) {
         var x = event.beta;  // In degree in the range [-180,180]
         var y = event.gamma; // In degree in the range [-90,90]
 
-        d3.select('.beta-label').text('BETA: ' + x.toString());
-        d3.select('.gamma-label').text('GAMMA: ' + y.toString());
+        if (typeof x === typeof undefined || x === null) {
+            return ;
+        }
+
+        var v = beta_scale(x);
+        update_row(parseInt(v));
+        d3.select('.beta-label').text('BETA: ' + x + ' ' + v.toString());
+     //   d3.select('.gamma-label').text('GAMMA: ' + y.toString());
     }
 
     window.addEventListener('deviceorientation', handleOrientation);
