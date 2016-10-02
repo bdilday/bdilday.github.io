@@ -463,7 +463,7 @@ d3.json('lineups.json', function(data) {
 
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
-        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
+        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma) + ' ' + highlighted_year);
     //    d3.select('.argval-label').text('ARGVAL: ' + argval.toFixed(2));
     }
 
