@@ -35,7 +35,7 @@ var MAX_YEAR = 2014;
 var width = cell_columns*cell_width - margin.left - margin.right;
 
 var width = 1200;
-var height = cell_rows*cell_height - margin.top - margin.bottom;
+var height = 800 - margin.top - margin.bottom;
 
 var beta_scale = d3.scale.linear()
     .range([MIN_YEAR, MAX_YEAR])
@@ -101,7 +101,7 @@ d3.json('lineups.json', function(data) {
     function make_brush() {
 
         var brush_cell_height = parseInt(brush_height/(MAX_YEAR - MIN_YEAR + 1));
-        _.forEach(_.range(MIN_YEAR, MAX_YEAR), function(year, year_counter) {
+        _.forEach(_.range(MAX_YEAR, MIN_YEAR, -1), function(year, year_counter) {
             var child_svg = svg.append('g')
                 .attr('transform', function() {
                     var s = 'translate(' ;
@@ -372,14 +372,14 @@ d3.json('lineups.json', function(data) {
             .attr('x', year_label_xoff_f1)
             .attr('y', year_label_yoff_f1)
             .style('font-size', 14)
-            .text('1913')
+            .text('2014')
         ;
 
         svg.append('text')
             .attr('x', year_label_xoff_f2)
             .attr('y', year_label_yoff_f2)
             .style('font-size', 14)
-            .text('2014')
+            .text('1913')
         ;
     }
 
