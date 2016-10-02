@@ -428,7 +428,7 @@ d3.json('lineups.json', function(data) {
         }
 
         var sign = z > 0  ? +1 : -1;
-        var absval = Math.abs(z);
+        var absval = Math.abs(gamma);
 
         if (absval > 50) {
             absval = 50;
