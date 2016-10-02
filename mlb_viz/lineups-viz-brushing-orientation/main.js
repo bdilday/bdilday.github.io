@@ -406,7 +406,7 @@ d3.json('lineups.json', function(data) {
             .attr('y', 250)
             .style('font-size', 12)
             .style('fill', 'red')
-            .text('gamma')
+            .text('gamma' + '  yr:' + highlighted_year)
 
             .attr('class', 'gamma-label')
         ;
