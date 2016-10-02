@@ -442,7 +442,7 @@ d3.json('lineups.json', function(data) {
     }
 
 
-//    window.addEventListener('deviceorientation', handleOrientation);
-    window.addEventListener('devicemotion', handleOrientation);
+    window.addEventListener('deviceorientation', handleOrientation);
+    //window.addEventListener('devicemotion', handleOrientation);
 
 });
