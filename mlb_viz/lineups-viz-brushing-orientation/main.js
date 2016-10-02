@@ -4,7 +4,7 @@
 var bar_color = '#045a8d';
 var bright_orange = '#fd8d3c';
 
-var margin = {top: 60, right: 80, bottom: 20, left: 100};
+var margin = {top: 120, right: 80, bottom: 20, left: 100};
 
 var cell_width = 60;
 var cell_height = 50;
@@ -85,6 +85,7 @@ var position_string = {
 };
 
 
+var highlighted_year = -1;
 var data_delta;
 
 d3.json('lineups.json', function(data) {
@@ -124,6 +125,7 @@ d3.json('lineups.json', function(data) {
                 .attr('y', function() {
                     return year_counter * brush_cell_height;
                 })
+                .attr('class', 'brush-rect-' + year)
                 .on('mouseover', function() {
                     update_row(year);
                     d3.select(this).attr('fill', bright_orange);
@@ -386,34 +388,36 @@ d3.json('lineups.json', function(data) {
         svg.append('text')
             .attr('x', 100)
             .attr('y', 200)
-            .style('font-size', 14)
+            .style('font-size', 12)
             .text('alpha')
             .attr('class', 'alpha-label')
         ;
 
         svg.append('text')
             .attr('x', 100)
-            .attr('y', 250)
-            .style('font-size', 14)
+            .attr('y', 225)
+            .style('font-size', 12)
             .text('beta')
             .attr('class', 'beta-label')
         ;
 
         svg.append('text')
-            .attr('x', 140)
-            .attr('y', 300)
-            .style('font-size', 14)
+            .attr('x', 100)
+            .attr('y', 250)
+            .style('font-size', 12)
+            .style('fill', 'red')
             .text('gamma')
+
             .attr('class', 'gamma-label')
         ;
 
-        svg.append('text')
-            .attr('x', 100)
-            .attr('y', 350)
-            .style('font-size', 14)
-            .text('argval')
-            .attr('class', 'argval-label')
-        ;
+        //svg.append('text')
+        //    .attr('x', 100)
+        //    .attr('y', 350)
+        //    .style('font-size', 14)
+        //    .text('argval')
+        //    .attr('class', 'argval-label')
+        //;
 
     }
 
@@ -436,6 +440,7 @@ d3.json('lineups.json', function(data) {
             return ;
         }
 
+
         var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
 
@@ -446,10 +451,20 @@ d3.json('lineups.json', function(data) {
         var argval = sign * (90 - absval);
         var this_year = parseInt(beta_scale(argval));
         update_row(this_year);
+        if (highlighted_year > 0 && highlighted_year !== this_year) {
+            svg.select('.brusher-rect-' + highlighted_year)
+                .attr('fill', bar_color)
+            ;
+            highlighted_year = this_year;
+            svg.select('.brusher-rect-' + highlighted_year)
+                .attr('fill', bright_orange)
+            ;
+        }
+
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
-        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma) + ' ' + absval.toFixed(2));
-        d3.select('.argval-label').text('ARGVAL: ' + argval.toFixed(2));
+        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
+    //    d3.select('.argval-label').text('ARGVAL: ' + argval.toFixed(2));
     }
 
 
