@@ -431,14 +431,12 @@ d3.json('lineups.json', function(data) {
 
     make_brush();
 
-    if (!window.DeviceOrientationEvent) {
-
-    }
 
     svg.append('text')
         .attr('x', 140)
         .attr('y', -30)
         .text('view on mobile (landscape) to use interaction')
+        .attr('class', 'warn-text')
     ;
     function handleOrientation(event) {
         var alpha = event.alpha;
@@ -449,7 +447,12 @@ d3.json('lineups.json', function(data) {
             return ;
         }
 
-
+        svg.select('.warn-text')
+            .transition()
+            .duration(5000)
+            .style('opacity', 0)
+        ;
+        
         var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
 
