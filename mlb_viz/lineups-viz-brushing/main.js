@@ -393,13 +393,13 @@ d3.json('lineups.json', function(data) {
         svg.append('text')
             .attr('x', 200)
             .attr('y', 200)
-            .style('font-size', 14)
+            .style('font-size', 4)
             .text('gamma')
             .attr('class', 'gamma-label')
         ;
     }
 
-//    make_orientation_labels();
+    make_orientation_labels();
 
     make_year_label();
     make_year_fixed_labels();
@@ -408,7 +408,6 @@ d3.json('lineups.json', function(data) {
     make_row(data_delta[1913], 2, false, 'red', diff_yscale);
 
     make_brush();
-
 
     function handleOrientation(event) {
         var x = event.beta;  // In degree in the range [-180,180]
@@ -430,6 +429,6 @@ d3.json('lineups.json', function(data) {
      //   d3.select('.gamma-label').text('GAMMA: ' + y.toString());
     }
 
-   // window.addEventListener('deviceorientation', handleOrientation);
+    window.addEventListener('deviceorientation', handleOrientation);
 
 });
