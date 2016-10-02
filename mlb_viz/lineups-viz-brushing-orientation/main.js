@@ -400,7 +400,7 @@ d3.json('lineups.json', function(data) {
         ;
 
         svg.append('text')
-            .attr('x', 80)
+            .attr('x', 140)
             .attr('y', 300)
             .style('font-size', 14)
             .text('gamma')
@@ -427,15 +427,16 @@ d3.json('lineups.json', function(data) {
             return ;
         }
 
-        var z = gamma;
-        if (z < -50) {
-            z = -50;
+        var sign = z > 0  ? +1 : -1;
+        var absval = Math.abs(z);
+
+        if (absval > 50) {
+            absval = 50;
         }
-        if (z > 50) {
-            z = 50;
-        }
-        var v = beta_scale(z);
-        update_row(parseInt(v));
+
+        var argval = sign * (90 - absval);
+        var this_year = parseInt(beta_scale(argval));
+        update_row(this_year);
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
         d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
