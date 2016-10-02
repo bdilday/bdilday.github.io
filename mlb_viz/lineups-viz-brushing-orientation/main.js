@@ -400,7 +400,7 @@ d3.json('lineups.json', function(data) {
         ;
 
         svg.append('text')
-            .attr('x', 120)
+            .attr('x', 80)
             .attr('y', 300)
             .style('font-size', 14)
             .text('gamma')
@@ -428,10 +428,10 @@ d3.json('lineups.json', function(data) {
         }
 
         var z = gamma;
-        if (z<-50) {
+        if (z < -50) {
             z = -50;
         }
-        if (z>50) {
+        if (z > 50) {
             z = 50;
         }
         var v = beta_scale(z);
