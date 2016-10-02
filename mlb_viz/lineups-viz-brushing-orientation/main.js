@@ -423,11 +423,11 @@ d3.json('lineups.json', function(data) {
         var beta = event.beta;  // In degree in the range [-180,180]
         var gamma = event.gamma; // In degree in the range [-90,90]
 
-        if (typeof beta === typeof undefined || beta === null) {
+        if (typeof gamma === typeof undefined || gamma === null) {
             return ;
         }
 
-        var sign = z > 0  ? +1 : -1;
+        var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
 
         if (absval > 50) {
