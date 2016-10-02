@@ -423,18 +423,18 @@ d3.json('lineups.json', function(data) {
         var beta = event.beta;  // In degree in the range [-180,180]
         var gamma = event.gamma; // In degree in the range [-90,90]
 
-        if (typeof x === typeof undefined || x === null) {
+        if (typeof alpha === typeof undefined || alpha === null) {
             return ;
         }
 
-        if (y<-50) {
-            y = -50;
-        }
-        if (y>50) {
-            y = 50;
-        }
-        var v = beta_scale(y);
-        update_row(parseInt(v));
+        //if (y<-50) {
+        //    y = -50;
+        //}
+        //if (y>50) {
+        //    y = 50;
+        //}
+        //var v = beta_scale(y);
+        //update_row(parseInt(v));
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
         d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
