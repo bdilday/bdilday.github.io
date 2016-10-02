@@ -388,7 +388,7 @@ d3.json('lineups.json', function(data) {
             .attr('y', 200)
             .style('font-size', 14)
             .text('alpha')
-            .attr('class', 'beta-label')
+            .attr('class', 'alpha-label')
         ;
 
         svg.append('text')
@@ -400,7 +400,7 @@ d3.json('lineups.json', function(data) {
         ;
 
         svg.append('text')
-            .attr('x', 100)
+            .attr('x', 120)
             .attr('y', 300)
             .style('font-size', 14)
             .text('gamma')
@@ -423,7 +423,7 @@ d3.json('lineups.json', function(data) {
         var beta = event.beta;  // In degree in the range [-180,180]
         var gamma = event.gamma; // In degree in the range [-90,90]
 
-        if (typeof alpha === typeof undefined || alpha === null) {
+        if (typeof beta === typeof undefined || beta === null) {
             return ;
         }
 
