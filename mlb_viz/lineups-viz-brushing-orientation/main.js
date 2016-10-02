@@ -85,7 +85,7 @@ var position_string = {
 };
 
 
-var highlighted_year = -2;
+var highlighted_year = -3;
 var data_delta;
 
 d3.json('lineups.json', function(data) {
@@ -452,7 +452,7 @@ d3.json('lineups.json', function(data) {
             .duration(5000)
             .style('opacity', 0)
         ;
-        
+
         var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
 
