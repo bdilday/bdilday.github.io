@@ -406,6 +406,15 @@ d3.json('lineups.json', function(data) {
             .text('gamma')
             .attr('class', 'gamma-label')
         ;
+
+        svg.append('text')
+            .attr('x', 140)
+            .attr('y', 350)
+            .style('font-size', 14)
+            .text('argval')
+            .attr('class', 'argval-label')
+        ;
+
     }
 
     make_orientation_labels();
@@ -439,7 +448,8 @@ d3.json('lineups.json', function(data) {
         update_row(this_year);
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
-        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma));
+        d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma) + ' ' + absval.toFixed(2));
+        d3.select('.argval-label').text('ARGVAL: ' + argval.toFixed(2));
     }
 
 
