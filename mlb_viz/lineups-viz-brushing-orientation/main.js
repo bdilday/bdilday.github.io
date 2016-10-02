@@ -85,8 +85,9 @@ var position_string = {
 };
 
 
-var highlighted_year = -3;
+var highlighted_year = -4;
 var data_delta;
+var warn_is_remove = false;
 
 d3.json('lineups.json', function(data) {
 
@@ -438,20 +439,39 @@ d3.json('lineups.json', function(data) {
         .text('view on mobile (landscape) to use interaction')
         .attr('class', 'warn-text')
     ;
-    function handleOrientation(event) {
-        var alpha = event.alpha;
-        var beta = event.beta;  // In degree in the range [-180,180]
-        var gamma = event.gamma; // In degree in the range [-90,90]
 
-        if (typeof gamma === typeof undefined || gamma === null) {
-            return ;
-        }
+    function warn_remove() {
 
         svg.select('.warn-text')
             .transition()
             .duration(5000)
             .style('opacity', 0)
         ;
+
+    }
+
+    function handleOrientation(event) {
+        var alpha = event.alpha;
+        var beta = event.beta;  // In degree in the range [-180,180]
+        var gamma = event.gamma; // In degree in the range [-90,90]
+
+        if (typeof gamma === typeof undefined || gamma === null) {
+
+            //svg.select('.warn-text')
+            //    .transition()
+            //    .duration(5000)
+            //    .style('opacity', 0)
+            //;
+
+
+            return ;
+        }
+
+
+        if (! warn_is_remove) {
+            warn_is_remove = true;
+            warn_remove();
+        }
 
         var sign = gamma > 0  ? +1 : -1;
         var absval = Math.abs(gamma);
