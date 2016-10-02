@@ -1,6 +1,5 @@
 
 
-screen.lockOrientation('landscape');
 
 var bar_color = '#045a8d';
 var bright_orange = '#fd8d3c';
