@@ -376,6 +376,26 @@ d3.json('lineups.json', function(data) {
         ;
     }
 
+    function make_orientation_labels() {
+
+        svg.append('text')
+            .attr('x', 100)
+            .attr('y', 200)
+            .style('font-size', 14)
+            .text('beta')
+            .attr('class', 'beta-label')
+        ;
+
+        svg.append('text')
+            .attr('x', 200)
+            .attr('y', 200)
+            .style('font-size', 14)
+            .text('gamma')
+            .attr('class', 'gamma-label')
+        ;
+    }
+
+    make_orientation_labels();
     make_year_label();
     make_year_fixed_labels();
     make_row(data['all'], 0, false);
@@ -384,5 +404,15 @@ d3.json('lineups.json', function(data) {
 
     make_brush();
 
+
+    function handleOrientation(event) {
+        var x = event.beta;  // In degree in the range [-180,180]
+        var y = event.gamma; // In degree in the range [-90,90]
+
+        d3.select('.beta-label').text('BETA: ' + x.toString());
+        d3.select('.gamma-label').text('GAMMA: ' + y.toString());
+    }
+
+    window.addEventListener('deviceorientation', handleOrientation);
 
 });
