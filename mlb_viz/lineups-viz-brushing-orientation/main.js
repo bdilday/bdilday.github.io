@@ -1,6 +1,4 @@
 
-
-
 var bar_color = '#045a8d';
 var bright_orange = '#fd8d3c';
 
@@ -31,9 +29,6 @@ var year_label_yoff_f2 = 505;
 var MIN_YEAR = 1913;
 var MAX_YEAR = 2014;
 
-
-var width = cell_columns*cell_width - margin.left - margin.right;
-
 var width = 1200;
 var height = 800 - margin.top - margin.bottom;
 
@@ -55,21 +50,12 @@ var cell_xscale = d3.scale.ordinal()
     .rangeRoundBands([0, cell_width], 0.1)
     .domain(_.range(1, 9+1));
 
-var cell_xaxis = d3.svg.axis()
-    .orient("bottom")
-    .scale(cell_xscale);
-
-var cell_yaxis = d3.svg.axis()
-    .orient("left")
-    .scale(cell_yscale);
-
 var svg = d3.select("body").append("svg")
         .attr("width", width + margin.left + margin.right + 100)
         .attr("height", height + margin.top + margin.bottom + 100)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     ;
-
 
 var position_string = {
     1: 'P',
@@ -84,20 +70,11 @@ var position_string = {
     10: 'DH'
 };
 
-
-var highlighted_year = -4;
+var highlighted_year = -1;
 var data_delta;
 var warn_is_remove = false;
 
 d3.json('lineups.json', function(data) {
-
-//    console.log('data', data);
-
-    var era_list = ['all', '1913-1919',
-        '1920-1940', '1946-1967',
-        '1973-1992', '1993-2002', '2006-2014'];
-
-
 
     function make_brush() {
 
@@ -185,7 +162,6 @@ d3.json('lineups.json', function(data) {
             .transition()
             .duration(10)
             .attr('height', function(d) {
-                //console.log(d, cell_yscale(d.value));
                 var v = yscale(d.value);
                 // scale goes to 0.5, but a few values are >0.5.
                 // clamp these at 0.5
@@ -243,13 +219,6 @@ d3.json('lineups.json', function(data) {
 
         var k = 'rect-' + idx_y.toString() + '-' + obj.position_idx.toString();
 
-        var e = child_svg.selectAll('.' + k)
-            .data([]);
-
-        //e.exit().remove();
-        //e = child_svg.selectAll('.' + k)
-        //    .data(data);
-
         var rect_width = cell_xscale(2) - cell_xscale(1);
         child_svg.selectAll('.' + k)
         .data(data)
@@ -257,7 +226,6 @@ d3.json('lineups.json', function(data) {
             .attr('class', k)
             .attr('width', rect_width)
             .attr('height', function(d) {
-                //console.log(d, cell_yscale(d.value));
                 var v = yscale(d.value);
                 // scale goes to 0.5, but a few values are >0.5.
                 // clamp these at 0.5
@@ -329,7 +297,6 @@ d3.json('lineups.json', function(data) {
     }
 
     function update_row(year) {
-        //console.log('mouseover!', year);
         make_row(data[year], 1, true);
         make_row(data_delta[year], 2, true, 'red', diff_yscale);
         update_year_label(year);
@@ -340,7 +307,7 @@ d3.json('lineups.json', function(data) {
     data['all'].forEach(function(d) {
         var k = d.position_idx.toString() + '-' + d.lineup_idx.toString();
         lookup_table[k] = d.value;
-    })
+    });
 
     data_delta = {};
     _.forEach(_.range(MIN_YEAR, MAX_YEAR), function(year) {
@@ -412,14 +379,6 @@ d3.json('lineups.json', function(data) {
             .attr('class', 'gamma-label')
         ;
 
-        //svg.append('text')
-        //    .attr('x', 100)
-        //    .attr('y', 350)
-        //    .style('font-size', 14)
-        //    .text('argval')
-        //    .attr('class', 'argval-label')
-        //;
-
     }
 
     make_orientation_labels();
@@ -431,7 +390,6 @@ d3.json('lineups.json', function(data) {
     make_row(data_delta[1913], 2, false, 'red', diff_yscale);
 
     make_brush();
-
 
     svg.append('text')
         .attr('x', 140)
@@ -456,17 +414,8 @@ d3.json('lineups.json', function(data) {
         var gamma = event.gamma; // In degree in the range [-90,90]
 
         if (typeof gamma === typeof undefined || gamma === null) {
-
-            //svg.select('.warn-text')
-            //    .transition()
-            //    .duration(5000)
-            //    .style('opacity', 0)
-            //;
-
-
             return ;
         }
-
 
         if (! warn_is_remove) {
             warn_is_remove = true;
@@ -496,11 +445,9 @@ d3.json('lineups.json', function(data) {
         d3.select('.alpha-label').text('ALPHA: ' + parseInt(alpha));
         d3.select('.beta-label').text('BETA: ' + parseInt(beta));
         d3.select('.gamma-label').text('GAMMA: ' + parseInt(gamma) + ' ' + highlighted_year);
-    //    d3.select('.argval-label').text('ARGVAL: ' + argval.toFixed(2));
     }
 
 
     window.addEventListener('deviceorientation', handleOrientation);
-    //window.addEventListener('devicemotion', handleOrientation);
 
 });
