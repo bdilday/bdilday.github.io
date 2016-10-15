@@ -473,8 +473,21 @@ d3.json('soe_ws_bracket.json', function(data) {
             var start_x = 1;
             var start_y = 1;
             var delta_x, delta_y;
-            var round_number = parseInt((d.idx-1)/32) + 1;
 
+            var round_number;
+            if (d.idx<=32) {
+                round_number = 1;
+            } else if (d.idx<=32+16) {
+                round_number = 2;
+            } else if (d.idx<=32+16+8) {
+                round_number = 3;
+            } else if (d.idx<=32+16+8+4) {
+                round_number = 4;
+            } else if (d.idx<=32+16+8+4+2) {
+                round_number = 5;
+            }
+
+            
             if (d.tier === 1 || d.tier === 4) {
                 start_x = 0;
                 delta_x = round_number;
@@ -483,11 +496,22 @@ d3.json('soe_ws_bracket.json', function(data) {
                 delta_x = -round_number;
             }
 
-            if (d.tier === 1 || d.tier == 2) {
-                start_y = 1 + 0.5 * (round_number - 1);
-            } else {
-                start_y = 1 + 8 + 0.5 * (round_number - 1);
+            function round_tier_to_ystart(round_number, tier) {
+                var start_y = 1;
+                if (round_number === 2) {
+                    start_y += 0.5;
+                } else if (round_number === 3) {
+                    start_y += 2;
+                } else if (round_number === 4) {
+                    start_y += 4
+                }
+                if (tier===1 || tier===2) {
+                    start_y += 8;
+                }
+                return start_y;
             }
+
+            start_y = round_tier_to_ystart(round_number, d.tier);
 
 
             if (round_number==1) {
@@ -496,6 +520,12 @@ d3.json('soe_ws_bracket.json', function(data) {
             } else if (round_number==2) {
                 delta_y = (d.idx-33) % 4
                 delta_y *= 2;
+            } else if (round_number==3) {
+                delta_y = (d.idx-49) % 2
+                delta_y *= 4;
+            } else if (round_number==4) {
+                delta_y = (d.idx-56) % 1
+                delta_y *= 16;
             }
 
 
