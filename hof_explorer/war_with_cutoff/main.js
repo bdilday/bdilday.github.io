@@ -33,14 +33,6 @@ var yaxis = d3.svg.axis()
     .orient("left")
     .scale(y);
 
-var ydom_cum = median_multiplier === 1 ? [-10, 10] : [-5, 200];
-var ycum = d3.scale.linear()
-    .range([height, 0])
-    .domain(ydom_cum);
-
-var yaxis_cum = d3.svg.axis()
-    .orient("left")
-    .scale(ycum);
 
 var x = d3.scale.ordinal()
         .rangeRoundBands([0, width, 1])
@@ -124,31 +116,9 @@ var line = d3.svg.line()
 
 var players = [];
 var ndata = {};
-var ndata_cum = {};
-
-var rerender = function(state) {
-
-    var nd_copy = state === 'cum' ? ndata_cum : ndata;
-
-
-    lines[playerid]
-        .transition()
-        .duration(500)
-        .attr('d', line(t))
-        .style('opacity', 1);
-
-    ;
-
-}
-
 
 /**********************************/
 var main = function(state) {
-
-    if (state === 'cum') {
-        y = ycum;
-    }
-
 
     /******************************************/
       d3.csv('combined2017.csv', function (data) {
@@ -157,14 +127,13 @@ var main = function(state) {
               return d.playerid;
           });
 
-
           var iscurrent = {};
           _.forEach(players, function (d) {
               ndata[d.playerid] = [];
-              ndata_cum[d.playerid] = [];
           });
 
           full_names = {};
+
           _.forEach(data, function (d, i) {
 
               ndata[d.playerid].push(+d.war);
@@ -173,32 +142,22 @@ var main = function(state) {
                   cur += d3.max([parseFloat(e), 0]);
               });
 
-              ndata_cum[d.playerid].push(cur);
-              // ndata[d.playerid].push(+d.war);
 
               full_names[d.playerid] = d.namefull;
               iscurrent[d.playerid] = d.current_candidate;
           });
 
-          var nd_copy = state === 'cum' ? ndata_cum : ndata;
 
-              _.forEach(nd_copy, function (v, k) {
+              _.forEach(ndata, function (v, k) {
                   var len = v.length;
                   var last = v[v.length-1];
-                  _.forEach(_.range(maxyear - len), function () {
-                      if (state === 'cum') {
-                          v.push(last);
-                      } else {
-                          v.push(-1);
-                      }
-                  })
               })
               ;
 
 
-          console.log('nd_copy', nd_copy);
+          console.log('ndata', ndata);
           maxyear = 0;
-          _.forEach(nd_copy, function (v, k) {
+          _.forEach(ndata, function (v, k) {
               var i = v.length;
               maxyear = Math.max(i, maxyear);
           })
@@ -210,11 +169,11 @@ var main = function(state) {
               return min_max[i] = {min: 9999, max: -9999};
           });
 
-          var compute_min_max = function (nd_copy) {
+          var compute_min_max = function (ndata) {
 
-              _.forEach(nd_copy, function (v, k) {
+              _.forEach(ndata, function (v, k) {
 
-                  _.forEach(nd_copy[k], function (d, i) {
+                  _.forEach(ndata[k], function (d, i) {
 
 
                       if (+iscurrent[k] === 0) {
@@ -236,7 +195,7 @@ var main = function(state) {
                   });
               });
           };
-          compute_min_max(nd_copy);
+          compute_min_max(ndata);
 
           _.forEach(_.range(maxyear), function (i) {
               idata[i].sort(function (a, b) {
@@ -271,8 +230,8 @@ var main = function(state) {
           console.log('s', s);
 
           var mapped_data = [];
-          _.forEach(nd_copy, function (v, k) {
-              _.forEach(nd_copy[k], function (d, i) {
+          _.forEach(ndata, function (v, k) {
+              _.forEach(ndata[k], function (d, i) {
                   mapped_data.push(
                       {
                           y: d - median_multiplier * median_values[i].median,
@@ -356,25 +315,31 @@ var main = function(state) {
               ;
 
 
+          function sum_war_cutoff(data, cutoff) {
+              console.log(data, cutoff);
+              return _.sum(
+                  _.map(data, function(d) {
+                      console.log('what to return?', d, d.war, cutoff, +d.war-cutoff);
+                  return +d.war >= cutoff ? +d.war-cutoff : 0.0;
+              })
+              );
+          }
+
+          var list_of_cutoffs = _.range(0, 8.001, 0.1);
+          console.log('list_of_', list_of_cutoffs);
+
           var make_path = function (playerid) {
 
-              var t0 = _.map(nd_copy[playerid], function (d, i) {
-                  //return {x: d, y: i+1};
-                  return {y: 0, x: i + 1};
-              });
-
-              var t = _.map(nd_copy[playerid], function (d, i) {
-                  //return {x: d, y: i+1};
-                  return {
-                      y: d - median_multiplier * median_values[i].median,
-                      x: i + 1
-                  };
+              var t = _.map(list_of_cutoffs,function(cutoff) {
+                  var ss = sum_war_cutoff(ndata[playerid],cutoff);
+                  console.log(playerid, "x", cutoff, "y", ss);
+                  return {y: ss, x: cutoff};
               });
 
 
               //console.log('t', t);
               lines[playerid] = svg.append("path")
-                  .attr("d", line(t0))
+                  .attr("d", line(t))
                   .attr("stroke", function () {
                       return stroke_color[iscurrent[playerid]];
                   })
@@ -392,18 +357,10 @@ var main = function(state) {
                       mouseout({k: playerid, c: iscurrent[playerid]});
                   });
 
-              lines[playerid]
-                  .transition()
-                  .duration(500)
-                  .attr('d', line(t))
-                  .style('opacity', 1);
-
-              ;
-
           };
 
 
-          _.forEach(nd_copy, function (v, k) {
+          _.forEach(ndata, function (v, k) {
               //  console.log('make_path for ', k);
               make_path(k);
           });
@@ -436,27 +393,15 @@ var main = function(state) {
 
           console.log('cur', cur);
 
-          if (state === 'cum') {
-              svg.append("g")
-                  .attr("class", "axis")
-                  .call(yaxis_cum)
-                  .append("text")
-                  .style("text-anchor", "middle")
-                  .attr("y", -9)
-                  .text('WAR')
-                  .attr('transform', 'translate(0,' + 0 + ')')
-              ;
-          } else {
-              svg.append("g")
-                  .attr("class", "axis")
-                  .call(yaxis)
-                  .append("text")
-                  .style("text-anchor", "middle")
-                  .attr("y", -9)
-                  .text('WAR')
-                  .attr('transform', 'translate(0,' + 0 + ')')
-              ;
-          }
+          svg.append("g")
+              .attr("class", "axis")
+              .call(yaxis)
+              .append("text")
+              .style("text-anchor", "middle")
+              .attr("y", -9)
+              .text('WAR')
+              .attr('transform', 'translate(0,' + 0 + ')')
+          ;
 
           svg.append("g")
               .attr("class", "axis")
@@ -551,6 +496,6 @@ var main = function(state) {
 };
 
 
-var state = 'cum';
+var state = '';
 
 main(state);
