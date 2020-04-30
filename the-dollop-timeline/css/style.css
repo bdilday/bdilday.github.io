@@ -1,0 +1,182 @@
+
+
+#tweetme {
+  position: absolute;           
+  top: 30px;
+  left: 30px;
+
+}
+
+#emailme {
+  position: absolute;           
+  top: 60px;
+  left: 30px;
+  width: 30 px; 
+}
+
+div.menutooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 240px;                  
+  height: 120px;                 
+  padding: 4px;             
+  font: 10px sans-serif;        
+  background: lightsteelblue;   
+  border: 2px;      
+  border-radius: 8px;           
+  pointer-events: none;         
+  line-height: 8px;
+}
+
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  display: block;
+}
+
+/* Creates a small triangle extender for the tooltip */
+/*   display: inline; */
+.d3-tip:after {
+  box-sizing: border-box;
+  font-size: 10px;
+  display: block;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+  color: "green";
+  display: block;
+}
+
+
+#bubblehead {
+    font-size: 18px;
+    line-height: 4px;
+    font-weight: "bold";
+    text-decoration: underline;
+    text-align: center;
+}
+
+#bubblemiles {
+    font-size: 18px;
+    line-height: 4px;
+    font-weight: "bold";
+    text-decoration: normal;
+    text-align: center;
+}
+
+#bubblelab {
+    margin: 0;
+    font-family: serif, sans-serif;
+    font-size: 14px;
+    line-height: 4px;
+    text-align: left;
+    text-decoration: none;
+}
+
+
+#menuhead {
+    font-size: 18px;
+    font-weight: "bold";
+    text-decoration: underline;
+    text-align: center;
+
+}
+
+#menulab {
+    margin: 0;
+    font-family: serif, sans-serif;
+    font-size: 12px;
+    line-height: 4px;
+    text-align: left;
+    text-decoration: none;
+}
+
+#brewery-menu {
+    position: absolute;
+    top: 20px;
+    left: 560px;
+}
+
+#style-menu {
+    position: absolute;
+    top: 30px;
+    left: 60px;
+
+}
+
+#s-menu-l {
+    position: absolute;
+    top: 40px;
+    left: -60px;
+    width: 120px;
+    text-align: "right";
+}
+
+#chart {
+  position: absolute;
+  top: 40px;
+  left: 200px;
+  width: 700px;
+  /*margin: 25px auto;*/
+}
+
+
+path {
+  fill: none;
+  stroke: #000;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+li.selected {
+  font-weight: bold;
+}
+
+p.selected {
+  font-weight: bold;
+}
+
+
+/**
+code for d3 tip
+**/
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  display: block;
+  width: "150 px";
+}
+
+/* Creates a small triangle extender for the tooltip */
+/*   display: inline; */
+.d3-tip:after {
+  box-sizing: border-box;
+  font-size: 10px;
+  display: block;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
